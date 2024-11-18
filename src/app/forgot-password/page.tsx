@@ -34,11 +34,10 @@ export default function Page() {
           </div>
         </NavLink>
 
-        <Typography variant="h4">Forgot password?</Typography>
+        <Typography variant="h4">Quên mật khẩu!</Typography>
 
         <Typography variant="small" className="my-5">
-          Please enter your email in the field below, and a link to reset your
-          password will be sent.
+          Vui lòng nhập email của bạn để nhận liên kết đặt lại mật khẩu.
         </Typography>
 
         <Formik

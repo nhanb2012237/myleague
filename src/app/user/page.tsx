@@ -31,7 +31,7 @@ const TournamentsPage = () => {
 
   return (
     <div className=" items-center justify-between ">
-      <TournamentsList tournaments={tournaments} />;
+      <TournamentsList tournaments={tournaments} />
     </div>
   );
 };

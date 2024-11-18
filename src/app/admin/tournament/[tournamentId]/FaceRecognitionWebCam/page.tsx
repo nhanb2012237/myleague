@@ -12,11 +12,12 @@ import { Typography } from '@material-tailwind/react';
 import Spinner from 'components/Loader/Spinner';
 import { FiCameraOff } from 'react-icons/fi';
 import banner from '/public/img/profile/banner.png';
-
+import FaceId from 'components/icons/FaceId';
+import NotFaceId from 'components/icons/NotFaceId';
+import Button from 'components/Button/Button';
 const Clock = dynamic(
   () => import('../../../../../components/admin/descriptors/Clock'),
 );
-
 function FaceRecognition() {
   const [camOn, setCamOn] = useState(false);
   const [reportOn, setReportOn] = useState(false);
@@ -45,7 +46,11 @@ function FaceRecognition() {
   const [recognizedPlayerIds, setRecognizedPlayerIds] = useState<string[]>([]); // Sử dụng mảng thay vì Set
   const [sessionRecognizedPlayers, setSessionRecognizedPlayers] = useState<
     string[]
-  >([]); // Sử dụng mảng thay vì Set
+  >([]);
+  const [isConfirming, setIsConfirming] = useState(false); // Thêm trạng thái xác nhận
+  const router = useRouter();
+
+  // Sử dụng mảng thay vì Set
   const webcamRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -90,6 +95,7 @@ function FaceRecognition() {
         }
       }
     }
+    // lấy lịch sử nhận diện
 
     async function fetchRecognitionHistory() {
       if (readyToFetch) {
@@ -197,6 +203,8 @@ function FaceRecognition() {
               avatarUrl: player.avatarUrl,
               teamId: player.teamId,
               playerId: player.playerId,
+              displayName: player.displayName,
+              jerseyNumber: player.jerseyNumber,
             },
           };
         })
@@ -208,7 +216,8 @@ function FaceRecognition() {
       return labeledFaceDescriptors;
     } catch (error) {
       console.error('Error loading labeled face descriptors:', error);
-      toast.error('Failed to load face descriptors');
+      toast.error('Vui lòng thêm cầu thủ vào hệ thống');
+      router.push(`/admin/tournament/${tournamentId}/team`);
       return [];
     }
   };
@@ -306,15 +315,23 @@ function FaceRecognition() {
 
                 setPreviousRecognizedPlayer(recognizedPlayerInfo);
               }
+              setIsConfirming(true); // Đặt trạng thái xác nhận
+              clearInterval(id); // Tạm dừng quá trình nhận diện
             } else {
               setDetectionStatus('not-recognized');
+              setIsConfirming(true); // Đặt trạng thái xác nhận
+              clearInterval(id); // Tạm dừng quá trình nhận diện
             }
           } else {
             setDetectionStatus('not-recognized');
+            setIsConfirming(true); // Đặt trạng thái xác nhận
+            clearInterval(id); // Tạm dừng quá trình nhận diện
           }
         }
       } else {
         setDetectionStatus('not-recognized');
+        setIsConfirming(true); // Đặt trạng thái xác nhận
+        clearInterval(id); // Tạm dừng quá trình nhận diện
       }
     }, 100);
     setIntervalId(id);
@@ -334,15 +351,29 @@ function FaceRecognition() {
     setCamOn(false);
     stopVideo();
     setDetectionStatus('idle');
+    setRecognizedPlayer(null);
+    setIsConfirming(false); // Reset trạng thái xác nhận
+  };
+
+  const handleConfirm = () => {
+    setRecognizedPlayer(null);
+    setDetectionStatus('idle');
+    setIsConfirming(false);
+    detectFace(); // Bắt đầu lại quá trình nhận diện
   };
 
   const startVideo = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width: 320, height: 240 },
-    });
-    if (webcamRef.current) {
-      webcamRef.current.srcObject = stream;
-      detectFace();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 320, height: 240 },
+      });
+      if (webcamRef.current) {
+        webcamRef.current.srcObject = stream;
+        detectFace();
+      }
+    } catch (error) {
+      console.error('Error accessing webcam:', error);
+      toast.error('Cannot access webcam');
     }
   };
 
@@ -354,6 +385,9 @@ function FaceRecognition() {
       tracks.forEach((track) => track.stop());
       webcamRef.current.srcObject = null;
     }
+    setDetectionStatus('idle');
+    setRecognizedPlayer(null);
+    setIsConfirming(false); // Reset trạng thái xác nhận
   };
 
   useEffect(() => {
@@ -367,6 +401,9 @@ function FaceRecognition() {
   }, [teams]);
 
   const teamName = teamNames[recognizedPlayer?.teamId] || 'Unknown Team';
+  const isConfirmed = recognizedPlayerIds.includes(
+    recognizedPlayer?.playerId || '',
+  );
 
   if (loading || !modelsLoaded) {
     return <Spinner />;
@@ -374,7 +411,8 @@ function FaceRecognition() {
 
   return (
     <div className="flex h-screen w-full flex-col md:flex-row">
-      <div className="flex w-full flex-col p-4 md:w-1/2">
+      {/* Phần Camera */}
+      <div className="gird flex  w-full flex-col p-4 md:w-1/2">
         <div
           className={`relative flex w-full items-start justify-center border-4 ${
             camOn
@@ -404,17 +442,15 @@ function FaceRecognition() {
               />
             </div>
           ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <FiCameraOff className="text-9xl text-gray-500" />
-            </div>
+            <div className="flex h-full w-full items-center justify-center"></div>
           )}
         </div>
         <button
           type="button"
           className={`${
             camOn
-              ? ' w-full bg-gray-500 '
-              : 'mt-2  w-full items-center rounded bg-blue-500 px-4 py-2 pl-10 pr-10 font-bold text-white hover:bg-blue-700'
+              ? 'w-full bg-gray-500'
+              : 'mt-2 w-full items-center rounded bg-blue-500 px-4 py-2 pl-10 pr-10 font-bold text-white hover:bg-blue-700'
           } ${
             camOn ? 'hover:bg-blue-700' : 'hover:bg-gray-700'
           } mt-2 items-center rounded px-4 py-2 font-bold text-white`}
@@ -424,72 +460,91 @@ function FaceRecognition() {
         </button>
       </div>
 
+      {/* Phần Hiển Thị Thông Tin */}
       <div className="flex w-full flex-col p-4 md:w-1/2">
-        {camOn && (
+        {camOn ? (
           <div className="card bg-base-300 rounded-box grid h-20 flex-grow ">
             {detectionStatus === 'detecting' ? (
               <Spinner />
-            ) : recognizedPlayer ? (
-              <Card
-                key={recognizedPlayer?.teamId}
-                extra={'items-center w-full  p-[16px]'}
-              >
-                {/* Background and profile */}
-                <div
-                  className="relative mt-1 flex h-32 w-full justify-center rounded-xl bg-cover"
-                  style={{ backgroundImage: `url(${banner.src})` }}
-                >
-                  <div className="absolute -bottom-12 flex h-[87px] w-[87px] items-center justify-center rounded-full border-[4px] border-white bg-pink-400 dark:!border-navy-700">
-                    <Image
-                      width="2"
-                      height="20"
-                      className="h-full w-full rounded-full"
-                      src={recognizedPlayer?.avatarUrl}
-                      alt={recognizedPlayer?.playerName}
-                    />
-                  </div>
-                </div>
-
-                {/* Name and position */}
-                <div className="mt-16 flex flex-col items-center">
-                  <h4 className="text-xl font-bold text-navy-700 dark:text-white">
-                    {recognizedPlayer.playerName}
-                  </h4>
-                  <h5 className="text-base font-normal text-gray-600">
-                    {teamName}
-                  </h5>
-                </div>
-
-                {/* Post followers */}
-                <div className="mb-3 mt-6 flex gap-4 md:!gap-14">
-                  <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
-                      17
-                    </h4>
-                    <p className="text-sm font-normal text-gray-600">Posts</p>
-                  </div>
-                  <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
-                      9.7K
-                    </h4>
-                    <p className="text-sm font-normal text-gray-600">
-                      Followers
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-center justify-center">
-                    <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
-                      434
-                    </h4>
-                    <p className="text-sm font-normal text-gray-600">
-                      Following
-                    </p>
-                  </div>
-                </div>
-              </Card>
             ) : (
-              <p className="text-lg font-bold">Không nhận diện được cầu thủ</p>
+              <>
+                {recognizedPlayer ? (
+                  <Card
+                    key={recognizedPlayer?.teamId}
+                    extra={'items-center h-1/2 w-full  p-[16px]'}
+                  >
+                    {/* Nội dung khi nhận diện được cầu thủ */}
+                    <div
+                      className="relative mt-1 flex h-32 w-full justify-center rounded-md bg-cover"
+                      style={{ backgroundImage: `url(${banner.src})` }}
+                    >
+                      <div className="absolute -bottom-20 flex h-[164px] w-[164px] items-center justify-center rounded-md border-[4px] border-white bg-pink-400 dark:!border-navy-700">
+                        <Image
+                          width="2"
+                          height="20"
+                          className="h-full w-full rounded-md"
+                          src={recognizedPlayer?.avatarUrl}
+                          alt={recognizedPlayer?.playerName}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Thông tin khác */}
+                    <div className="mt-20 flex gap-4 md:!gap-14">
+                      <div className="mt-30 flex flex-col items-center">
+                        <h4 className="text-xl font-bold text-navy-700 dark:text-white">
+                          {recognizedPlayer.playerName}
+                        </h4>
+                        <h5 className="text-base font-normal text-gray-600">
+                          Tên thi đấu: {recognizedPlayer.displayName}
+                        </h5>
+                        <h5 className="text-base font-normal text-gray-600">
+                          Số áo thi đấu:{recognizedPlayer.jerseyNumber}
+                        </h5>
+                        <h5 className="text-base font-normal text-gray-600">
+                          Đội thi đấu:{teamName}
+                        </h5>
+                        Tình trạng xác nhận:{' '}
+                        {isConfirmed ? 'đã xác nhận' : 'chưa xác nhận'}
+                      </div>
+                    </div>
+
+                    {isConfirming && (
+                      <Button
+                        className="mt-4 w-full bg-navy-700 text-white"
+                        onClick={handleConfirm}
+                      >
+                        Xác nhận cầu thủ
+                      </Button>
+                    )}
+                  </Card>
+                ) : (
+                  <Card
+                    key={recognizedPlayer?.teamId}
+                    extra={'items-center h-1/2 w-full p-[16px]'}
+                  >
+                    <NotFaceId />
+                    <h5 className="text-base font-normal text-gray-600">
+                      Không tìm thấy thông tin cầu thủ vui lòng thử lại!
+                    </h5>{' '}
+                    <Button
+                      className="mt-4 w-full bg-navy-700 text-white"
+                      onClick={handleConfirm}
+                    >
+                      Xác nhận lại cầu thủ
+                    </Button>
+                  </Card>
+                )}
+              </>
             )}
           </div>
+        ) : (
+          <Card
+            key={recognizedPlayer?.teamId}
+            extra={'items-center h-1/2 w-full p-[16px]'}
+          >
+            <FaceId />
+          </Card>
         )}
       </div>
     </div>

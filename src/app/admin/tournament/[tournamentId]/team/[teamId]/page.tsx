@@ -1,10 +1,4 @@
 'use client';
-import Banner from 'components/admin/team/Banner';
-import General from 'components/admin/players/General';
-import Notification from 'components/admin/players/Notification';
-import Project from 'components/admin/players/Project';
-import Storage from 'components/admin/players/Storage';
-import Upload from 'components/admin/players/Upload';
 import Information from 'components/admin/team/Information';
 import TeamDetail from 'components/admin/team/TeamDetail';
 import { useParams, useRouter } from 'next/navigation';

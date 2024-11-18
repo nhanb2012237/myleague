@@ -155,6 +155,7 @@ const Marketplace = () => {
       if (user) {
         setUserId(user.uid);
         console.log('User logged in1:', user.uid);
+        setLoading(false);
       } else {
         console.log('User not logged in');
       }
@@ -165,6 +166,10 @@ const Marketplace = () => {
   const handleMatchSelect = useCallback((match: Match) => {
     setSelectedMatch(match);
   }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="mt-3 grid h-full grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">

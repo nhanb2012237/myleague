@@ -349,12 +349,16 @@ const CreateTournamentDialog = ({
                       formik.setFieldValue('numberOfPlayers', value)
                     }
                     onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.numberOfPlayers &&
+                      Boolean(formik.errors.numberOfPlayers)
+                    }
                   >
                     <Option value="5">5 người</Option>
                     <Option value="7">7 người</Option>
                   </Select>
                   {formik.errors.numberOfPlayers && (
-                    <p className="-mt-4 w-full font-[0.75rem] text-red-500">
+                    <p className="font-sm mt-1 text-red-500">
                       {formik.errors.numberOfPlayers}
                     </p>
                   )}
@@ -410,8 +414,8 @@ const CreateTournamentDialog = ({
         <div className="mr-0 flex justify-end">
           <Button
             variant="outlined"
-            onClick={onClose}
-            className="gap-5 bg-brand-500 text-white"
+            onClick={handleClose}
+            className="gap-5 bg-navy-700  text-white"
           >
             Hủy
           </Button>
@@ -419,7 +423,7 @@ const CreateTournamentDialog = ({
             type="button" // Đổi từ "submit" thành "button"
             disabled={uploading}
             onClick={handleButtonClick} // Gọi hàm handleSubmit của formik
-            className="ml-5 bg-brand-500 text-white"
+            className="ml-5 bg-navy-700 text-white"
           >
             {uploading ? 'Đang tạo...' : 'Tạo giải đấu'}
           </Button>

@@ -4,7 +4,7 @@ export default function AuthError({ errorCode }: { errorCode: string }) {
   switch (errorCode) {
     case 'auth/invalid-credential':
       errorMessage =
-        'Invalid email or password. Please check your credentials and try again.';
+        'Thông tin đăng nhập không hợp lệ. Vui lòng kiểm tra lại thông tin đăng nhập.';
       break;
     case 'auth/user-disabled':
       errorMessage =
@@ -34,15 +34,11 @@ export default function AuthError({ errorCode }: { errorCode: string }) {
       errorMessage =
         'Registration is currently not allowed. Please try again later or contact support.';
       break;
-    case 'auth/account-exists-with-different-credential':
-      errorMessage =
-        'It looks like you already have an account with a different sign-in method. Please choose another method to link your existing account.';
-
     default:
   }
 
   return (
-    <p className="text-red-medium text-heading-s-variant mt-4 font-medium">
+    <p className="text-heading-s-variant font-medium text-red-600">
       {errorMessage}
     </p>
   );

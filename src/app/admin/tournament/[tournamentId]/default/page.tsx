@@ -361,7 +361,6 @@ import Widget from 'components/widget/Widget';
 import TeamStatsTable from 'components/admin/default/TeamStatsTable';
 import PlayersTable from 'components/admin/default/PlayersTable';
 import { HiMiniArrowDownTray } from 'react-icons/hi2';
-
 import { GiSoccerField } from 'react-icons/gi';
 import { GiSoccerBall } from 'react-icons/gi';
 import { TbCards } from 'react-icons/tb';
@@ -774,6 +773,14 @@ const Dashboard = () => {
     y += 10;
 
     doc.text(`- Địa điểm: ${tournament?.location}`, 10, y);
+    y += 10;
+    doc.text(`- Đội vô địch: ${tableData?.[0].teamName}`, 10, y);
+    y += 10;
+    doc.text(
+      `- Vua phá lưới: ${topPlayers?.[0].playerName} (${topPlayers[0].goals} bàn)`,
+      10,
+      y,
+    );
     y += 10;
 
     doc.text('## 2. Bảng xếp hạng', 10, y);

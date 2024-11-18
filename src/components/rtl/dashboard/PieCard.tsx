@@ -1,5 +1,5 @@
 import PieChart from 'components/charts/PieChart';
-import { pieChartData, pieChartOptions } from 'variables/charts';
+// import { pieChartData, pieChartOptions } from 'variables/charts';
 import Card from 'components/card';
 
 const PieChartCard = () => {
@@ -22,7 +22,7 @@ const PieChartCard = () => {
       </div>
 
       <div className="mb-auto flex h-[220px] w-full items-center justify-center">
-        <PieChart chartOptions={pieChartOptions} chartData={pieChartData} />
+        {/* <PieChart chartOptions={pieChartOptions} chartData={pieChartData} /> */}
       </div>
       <div className="flex flex-row !justify-between rounded-2xl px-6 py-3 shadow-2xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
         <div className="flex flex-col items-center justify-center">

@@ -21,10 +21,10 @@ const Banner: React.FC<BannerProps> = ({
   match,
   userId,
   tournamentId,
-  // setLoading,
+  setLoading,
 }) => {
   const [playersTeam1, setPlayersTeam1] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [playersTeam2, setPlayersTeam2] = useState<Player[]>([]);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -78,7 +78,7 @@ const Banner: React.FC<BannerProps> = ({
     setOpen(false); // Đóng dialog
   };
 
-  if (loading) {
+  if (!setLoading) {
     return <Spinner />;
   }
 

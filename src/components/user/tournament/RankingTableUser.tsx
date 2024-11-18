@@ -153,10 +153,11 @@ const DevelopmentTable: React.FC<DevelopmentTableProps> = ({
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Team Rankings
+              Bảng xếp hạng
             </Typography>
             <Typography color="gray" className="mt-1 font-normal">
-              These are the rankings of the teams in the tournament
+              Quy tắc xếp hạng: Điểm số &gt; Hiệu số bàn thắng &gt; Số bàn thắng
+              &gt; Số thẻ phạt{' '}
             </Typography>
           </div>
           {/* <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -180,7 +181,7 @@ const DevelopmentTable: React.FC<DevelopmentTableProps> = ({
                 <th
                   key={head}
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-900"
+                  className="px-3 py-1 text-left text-xs font-bold uppercase tracking-wider text-gray-900"
                 >
                   {head}
                 </th>
@@ -190,7 +191,7 @@ const DevelopmentTable: React.FC<DevelopmentTableProps> = ({
           <tbody className="divide-y divide-gray-200 bg-white">
             {tableData.map((team, index) => (
               <tr key={index}>
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                <td className="whitespace-nowrap px-6 py-2 text-sm font-medium text-gray-900">
                   {index + 1}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">

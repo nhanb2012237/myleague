@@ -22,17 +22,17 @@ export const getBarChartDataTeamStats = (teams, goals, totalcard) => {
 
   const barChartDataTeamStats = [
     {
-      name: 'Goals',
+      name: 'Bàn thắng',
       data: teamGoals,
       color: '#6AD2FF',
     },
     {
-      name: 'Yellow Cards',
+      name: 'Thẻ vàng',
       data: teamYellowCards,
       color: '#FFD700',
     },
     {
-      name: 'Red Cards',
+      name: 'Thẻ đỏ',
       data: teamRedCards,
       color: '#FF4560',
     },
@@ -82,7 +82,7 @@ export const getBarChartDataTeamStats = (teams, goals, totalcard) => {
         },
       },
       title: {
-        text: 'Goals and Cards',
+        text: 'Bàn thắng và thẻ phạt',
         style: {
           color: '#6AD2FF',
         },

@@ -68,7 +68,7 @@ export const useAccountActions = () => {
   const handleResetPassword = async (values: any, resetForm: () => void) => {
     try {
       await dispatch(resetUserPassword({ email: values.email })).unwrap();
-      toast.success('Password reset link sent successfully!');
+      toast.success('Vui lòng kiểm tra email để đặt lại mật khẩu.');
       resetForm();
     } catch (error) {
       console.log('Error sending password reset link:', error);

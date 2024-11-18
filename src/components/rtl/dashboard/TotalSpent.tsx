@@ -4,10 +4,9 @@ import {
   MdBarChart,
 } from 'react-icons/md';
 import Card from 'components/card';
-import {
-  lineChartDataTotalSpent,
-  lineChartOptionsTotalSpent,
-} from 'variables/charts';
+import // lineChartDataTotalSpent,
+// lineChartOptionsTotalSpent,
+'variables/charts';
 import LineChart from 'components/charts/LineChart';
 
 const TotalSpent = () => {
@@ -38,8 +37,8 @@ const TotalSpent = () => {
         </div>
         <div className="h-full w-full">
           <LineChart
-            chartOptions={lineChartOptionsTotalSpent}
-            chartData={lineChartDataTotalSpent}
+          // chartOptions={lineChartOptionsTotalSpent}
+          // chartData={lineChartDataTotalSpent}
           />
         </div>
       </div>

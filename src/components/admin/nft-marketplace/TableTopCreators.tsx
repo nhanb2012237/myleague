@@ -23,13 +23,13 @@ interface TopCreatorTableProps {
 const TopCreatorTable: React.FC<TopCreatorTableProps> = ({
   userId,
   tournamentId,
-  // setLoading,
+  setLoading,
 }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [topPlayers, setTopPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const TABLE_HEAD = [
     { lable: 'Tên cầu thủ', key: 'Tên cầu' },
@@ -108,7 +108,7 @@ const TopCreatorTable: React.FC<TopCreatorTableProps> = ({
     }
   }, [players, goals]);
 
-  if (loading && topPlayers.length === 0) {
+  if (setLoading && topPlayers.length === 0) {
     return <Spinner />;
   }
 

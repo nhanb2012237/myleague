@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import FlipCard from "react-countdown-flip-card";
+import FlipCard from 'react-countdown-flip-card';
 
 export interface CountdownFlipCardProps {
   readonly days: number;
@@ -16,13 +16,13 @@ export const CountdownFlipCard = ({
 }: CountdownFlipCardProps) => {
   const getDigits = (value: number): [string, string] => {
     if (value < 10) {
-      return ["0", value.toString()];
+      return ['0', value.toString()];
     }
     const strValue = String(value);
     return [strValue[0], strValue[1]];
   };
   return (
-    <div className="flex flex-row space-x-6 scale-50 md:scale-75 lg:scale-100">
+    <div className="flex scale-50 flex-row space-x-6 md:scale-75 lg:scale-100">
       <div className="flex flex-col items-center space-y-2">
         <div className="flex flex-row space-x-1">
           <FlipCard
@@ -39,7 +39,7 @@ export const CountdownFlipCard = ({
           />
         </div>
         <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-          {days > 1 ? "Days" : "Day"}
+          {days > 1 ? 'Days' : 'Day'}
         </h2>
       </div>
 
@@ -59,7 +59,7 @@ export const CountdownFlipCard = ({
           />
         </div>
         <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-          {hours > 1 ? "Hours" : "Hour"}
+          {hours > 1 ? 'Hours' : 'Hour'}
         </h2>
       </div>
 
@@ -79,7 +79,7 @@ export const CountdownFlipCard = ({
           />
         </div>
         <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-          {minutes > 1 ? "Minutes" : "Minute"}
+          {minutes > 1 ? 'Minutes' : 'Minute'}
         </h2>
       </div>
 
@@ -99,7 +99,7 @@ export const CountdownFlipCard = ({
           />
         </div>
         <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-          {seconds > 1 ? "Seconds" : "Second"}
+          {seconds > 1 ? 'Seconds' : 'Second'}
         </h2>
       </div>
     </div>

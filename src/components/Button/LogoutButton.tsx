@@ -30,20 +30,16 @@ export default function LogoutButton({
       <div className="rotate-90">
         <ArrowIcon />
       </div>
-     
     </div>
   );
 
-    return (
-      <button
-        type="button"
-        className="mb-6 flex items-center gap-6 md:hidden"
-        onClick={handleLogout}
-      >
-        {content}
-      </button>
-    );
-  }
-
-
+  return (
+    <button
+      type="button"
+      className="mb-6 flex items-center gap-6 md:hidden"
+      onClick={handleLogout}
+    >
+      {content}
+    </button>
+  );
 }

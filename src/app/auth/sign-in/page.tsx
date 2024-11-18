@@ -1,17 +1,8 @@
 'use client';
 import { useEffect } from 'react';
-
-import InputField from 'components/fields/InputField';
 import Default from 'components/auth/variants/DefaultAuthLayout';
-import { FcGoogle } from 'react-icons/fc';
 import Checkbox from 'components/checkbox';
 import SignInForm from 'components/auth/variants/DefaultAuthLayout/sign-in/SignInForm';
-import { useAuth } from '../../../hooks/use-auth';
-import { LoginPayload } from '../../../models/auth';
-import { decodeUrl, getErrorMessage } from '../../../utils';
-import { Paper, Typography } from '@mui/material';
-import { Box } from '@mui/system';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAppSelector, useAppStore } from '../../../lib/hooks';
 import AuthError from 'components/auth/variants/DefaultAuthLayout/AuthError';

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../config/firebaseconfig';
+import { db } from '../../../../config/firebaseconfig';
 
 export default async function handler(
   req: NextApiRequest,

@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Match } from '../../../models/entities';
 import { Chip } from '@material-tailwind/react';
+import { set } from 'date-fns';
+import Spinner from 'components/Loader/Spinner';
 
 interface TopPlayersProps {
   onMatchSelect: (match: Match) => void;
@@ -45,6 +47,13 @@ const TopPlayers: React.FC<TopPlayersProps> = ({
   const handleMatchSelect = (match) => {
     setSelectedMatch(match);
   };
+  if (!setLoading) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <>
