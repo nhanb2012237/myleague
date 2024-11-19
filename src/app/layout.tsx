@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://valik3201-invoice-app.vercel.app/'),
   title: 'Football Manage App',
   description:
-    'Work smarter with the invoice app. Streamline your invoicing process with ease.',
+    '',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

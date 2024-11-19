@@ -32,7 +32,7 @@
     "@tensorflow/tfjs-backend-webgl": "^4.21.0",
     "@tensorflow/tfjs-converter": "^4.21.0",
     "@tensorflow/tfjs-core": "^4.21.0",
-    "@tensorflow/tfjs-node": "^4.21.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -69,12 +69,12 @@
     "next-connect": "^1.0.0",
     "next-transpile-modules": "^9.1.0",
     "path": "^0.12.7",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-apexcharts": "^1.4.0",
     "react-calendar": "^3.9.0",
     "react-countdown-flip-card": "^1.0.0",
     "react-custom-scrollbars-2": "^4.2.1",
-    "react-dom": "^18.2.0",
+    "react-dom": "^18.3.1",
     "react-easy-crop": "^5.0.8",
     "react-feather": "^2.0.10",
     "react-google-places-autocomplete": "^4.1.0",
@@ -88,6 +88,7 @@
     "react-scripts": "5.0.1",
     "react-virtualized": "^9.22.5",
     "react-webcam": "^7.2.0",
+    "sharp": "^0.33.5",
     "sonner": "^1.5.0",
     "styled": "^1.0.0",
     "styled-components": "^6.1.13",
@@ -152,11 +153,6 @@
     "prettier": "^2.8.3",
     "prettier-plugin-tailwindcss": "^0.2.1",
     "tailwindcss": "^3.4.7"
-  },
-  "browser": {
-    "fs": false,
-    "os": false,
-    "path": false
   },
   "resolutions": {
     "@types/react": "18.0.31",
