@@ -248,6 +248,17 @@ const RedCardComponent: React.FC<RedCardComponentProps> = ({
     ]);
   }, [redCardScorersTeam1, redCardScorersTeam2, setRedCardScorers]);
 
+  useEffect(() => {
+    const allSelected =
+      redCardScorersTeam1.every((scorer) => scorer.playerId) &&
+      redCardScorersTeam2.every((scorer) => scorer.playerId);
+    if (!allSelected) {
+      setError('Vui lòng chọn cầu thủ cho tất cả các thẻ vàng.');
+    } else {
+      setError('');
+    }
+  }, [redCardScorersTeam1, redCardScorersTeam2]);
+
   return (
     <div>
       {error && <Alert severity="error">{error}</Alert>}

@@ -5,7 +5,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import { TeamInfo } from '../../../models/entities';
 import axios from 'axios';
 import { Select, Option } from '@material-tailwind/react';
-import { TextField, Alert } from '@mui/material';
+import { TextField, Alert, Input } from '@mui/material';
 
 interface GoalScorer {
   team: number; // 1 cho đội 1, 2 cho đội 2
@@ -86,13 +86,71 @@ const ScoreComponent: React.FC<ScoreComponentProps> = ({
     return [];
   };
 
-  const handleScoreChange = (team: number, score: string) => {
-    const newScore = parseInt(score, 10);
+  // const handleScoreChange = (team: number, score: string) => {
+  //   const newScore = parseInt(score, 10);
 
-    if (isNaN(newScore) || newScore < 0) {
-      return; // Không làm gì nếu newScore không hợp lệ hoặc âm
+  //   if (isNaN(newScore) || newScore < 0) {
+  //     return; // Không làm gì nếu newScore không hợp lệ hoặc âm
+  //   }
+
+  //   if (team === 1) {
+  //     setLocalTeam1Score(newScore);
+  //     setTeam1Score(newScore);
+  //     setGoalScorersTeam1((prev) => {
+  //       if (newScore > prev.length) {
+  //         return [
+  //           ...prev,
+  //           ...Array(newScore - prev.length).fill({
+  //             playerId: '',
+  //             playerName: '',
+  //             goals: 1,
+  //           }),
+  //         ];
+  //       } else {
+  //         return prev.slice(0, newScore);
+  //       }
+  //     });
+  //   } else if (team === 2) {
+  //     setLocalTeam2Score(newScore);
+  //     setTeam2Score(newScore);
+  //     setGoalScorersTeam2((prev) => {
+  //       if (newScore > prev.length) {
+  //         return [
+  //           ...prev,
+  //           ...Array(newScore - prev.length).fill({
+  //             playerId: '',
+  //             playerName: '',
+  //             goals: 1,
+  //           }),
+  //         ];
+  //       } else {
+  //         return prev.slice(0, newScore);
+  //       }
+  //     });
+  //   }
+  // };
+  const handleScoreChange = (team: number, score: string) => {
+    // Giá trị nhập vào là chuỗi
+    if (score === '') {
+      // Nếu giá trị trống, reset score về 0
+      if (team === 1) {
+        setLocalTeam1Score(0);
+        setTeam1Score(0);
+      } else if (team === 2) {
+        setLocalTeam2Score(0);
+        setTeam2Score(0);
+      }
+      return;
     }
 
+    const newScore = parseInt(score, 10); // Chuyển chuỗi sang số nguyên
+
+    if (isNaN(newScore) || newScore < 0) {
+      // Không làm gì nếu giá trị không hợp lệ
+      return;
+    }
+
+    // Cập nhật state và logic số bàn thắng
     if (team === 1) {
       setLocalTeam1Score(newScore);
       setTeam1Score(newScore);

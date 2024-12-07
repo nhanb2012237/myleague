@@ -9,6 +9,7 @@ import AuthError from 'components/auth/variants/DefaultAuthLayout/AuthError';
 import SignInOAuthButtons from 'components/auth/variants/DefaultAuthLayout/sign-in/SignInOAuthButtons';
 import ForgotPasswordLink from 'components/auth/ForgotPasswordLink';
 import Userview from 'components/auth/Userview';
+import Link from 'next/link';
 
 function SignInDefault() {
   const error = useAppSelector((state) => state.auth.errors.loginError);
@@ -52,12 +53,12 @@ function SignInDefault() {
                   Chưa có tài khoản?
                 </span>
                 <div>
-                  <a
+                  <Link
                     href="/auth/sign-up"
                     className=" text-sm font-bold text-brand-500 hover:text-brand-600 dark:text-white"
                   >
                     Tạo tài khoản
-                  </a>
+                  </Link>
                 </div>
 
                 <ForgotPasswordLink />

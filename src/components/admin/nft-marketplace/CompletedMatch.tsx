@@ -77,6 +77,7 @@ const CompletedMatch: React.FC<CompletedMatchProps> = ({
   const [redCardScorers, setRedCardScorers] = useState<GoalScorer[]>([]);
   const [team1Score, setTeam1Score] = useState<number>(match.score.team1Score);
   const [team2Score, setTeam2Score] = useState<number>(match.score.team2Score);
+  const [isScoreValid, setIsScoreValid] = useState<boolean>(false);
 
   const handleSaveMatch = async () => {
     try {
@@ -150,6 +151,7 @@ const CompletedMatch: React.FC<CompletedMatchProps> = ({
           setGoalScorers={setGoalScorers}
           setTeam1Score={setTeam1Score}
           setTeam2Score={setTeam2Score}
+          setIsScoreValid={setIsScoreValid} // Truyền props mới
         />
       ),
     },

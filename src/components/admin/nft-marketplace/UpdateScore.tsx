@@ -300,6 +300,7 @@ interface ScoreComponentProps {
   setGoalScorers: (scorers: GoalScorer[]) => void;
   setTeam1Score: (score: number) => void;
   setTeam2Score: (score: number) => void;
+  setIsScoreValid: React.Dispatch<React.SetStateAction<boolean>>; // Thêm props này
 }
 
 const UpdateScore: React.FC<ScoreComponentProps> = ({
@@ -315,6 +316,7 @@ const UpdateScore: React.FC<ScoreComponentProps> = ({
   setGoalScorers,
   setTeam1Score,
   setTeam2Score,
+  setIsScoreValid,
 }) => {
   const [team1Score, setLocalTeam1Score] = useState<number>(
     match.score.team1Score,
@@ -362,6 +364,34 @@ const UpdateScore: React.FC<ScoreComponentProps> = ({
     }
     return [];
   };
+
+  useEffect(() => {
+    // Check if all goal scorers have a selected player
+    const allSelected =
+      goalScorersTeam1.every((scorer) => scorer.playerId) &&
+      goalScorersTeam2.every((scorer) => scorer.playerId);
+    if (!allSelected) {
+      setError('Vui lòng chọn cầu thủ cho tất cả các bàn thắng.');
+      setIsScoreValid(false);
+    } else {
+      setError('');
+      setIsScoreValid(true);
+    }
+  }, [goalScorersTeam1, goalScorersTeam2]);
+
+  // useEffect(() => {
+  //   // Kiểm tra xem số lượng cầu thủ ghi bàn có khớp với tỉ số nhập vào hay không
+  //   const isTeam1Valid = team1Score === goalScorersTeam1.length;
+  //   const isTeam2Valid = team2Score === goalScorersTeam2.length;
+
+  //   if (!isTeam1Valid || !isTeam2Valid) {
+  //     setError('Số lượng cầu thủ ghi bàn không khớp với tỉ số.');
+  //     setIsScoreValid(false);
+  //   } else {
+  //     setError('');
+  //     setIsScoreValid(true);
+  //   }
+  // }, [team1Score, team2Score, goalScorersTeam1, goalScorersTeam2]);
 
   const handleScoreChange = (team: number, score: string) => {
     const newScore = parseInt(score, 10);

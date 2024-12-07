@@ -28,7 +28,7 @@ import Avatar from '../../components/icons/Avatar';
 function SignInDefault() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAppSelector((state) => state.auth);
 
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
@@ -79,8 +79,8 @@ function SignInDefault() {
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();
-      toast.success('Đăng xuất thành công');
       router.push('/auth/sign-in');
+      toast.success('Đăng xuất thành công');
     } catch (error) {
       console.error('Logout failed:', error);
     }

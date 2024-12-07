@@ -55,6 +55,7 @@ interface ScoreDialogProps {
   matchId: string;
   match: Match;
   onReload?: () => void;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ScoreDialog: React.FC<ScoreDialogProps> = ({
@@ -69,6 +70,7 @@ const ScoreDialog: React.FC<ScoreDialogProps> = ({
   logo2,
   matchId,
   match,
+  setIsEditing,
 }) => {
   const [activeTab, setActiveTab] = useState<string>('goals');
   const [goalScorers, setGoalScorers] = useState<GoalScorer[]>([]);
@@ -115,6 +117,7 @@ const ScoreDialog: React.FC<ScoreDialogProps> = ({
 
       console.log('Cập nhật trận đấu thành công');
       onReload && onReload();
+      setIsEditing(false); // Reset editing state
       onClose();
     } catch (error) {
       console.error('Cập nhật trận đấu thất bại:', error);

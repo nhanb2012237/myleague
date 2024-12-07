@@ -110,6 +110,90 @@
 //         return res.status(200).json({ message: 'Dữ liệu không thay đổi' });
 //       }
 
+//       // Lấy thông tin thống kê của đội 1 và đội 2
+//       const team1StatsRef = doc(
+//         db,
+//         `users/${userId}/tournaments/${tournamentId}/rankings/${team1Id}`,
+//       );
+//       const team2StatsRef = doc(
+//         db,
+//         `users/${userId}/tournaments/${tournamentId}/rankings/${team2Id}`,
+//       );
+
+//       const team1StatsSnap = await getDoc(team1StatsRef);
+//       const team2StatsSnap = await getDoc(team2StatsRef);
+
+//       if (!team1StatsSnap.exists() || !team2StatsSnap.exists()) {
+//         return res
+//           .status(404)
+//           .json({ error: 'Thông tin thống kê không tồn tại' });
+//       }
+
+//       const team1Stats = team1StatsSnap.data();
+//       const team2Stats = team2StatsSnap.data();
+
+//       // Trừ đi các thông số của trận đấu trước đó
+//       const previousTeam1Win =
+//         currentMatchData.score.team1Score > currentMatchData.score.team2Score
+//           ? 1
+//           : 0;
+//       const previousTeam1Draw =
+//         currentMatchData.score.team1Score === currentMatchData.score.team2Score
+//           ? 1
+//           : 0;
+//       const previousTeam1Loss =
+//         currentMatchData.score.team1Score < currentMatchData.score.team2Score
+//           ? 1
+//           : 0;
+//       const previousTeam1Points = previousTeam1Win * 3 + previousTeam1Draw;
+
+//       const previousTeam2Win =
+//         currentMatchData.score.team2Score > currentMatchData.score.team1Score
+//           ? 1
+//           : 0;
+//       const previousTeam2Draw =
+//         currentMatchData.score.team2Score === currentMatchData.score.team1Score
+//           ? 1
+//           : 0;
+//       const previousTeam2Loss =
+//         currentMatchData.score.team2Score < currentMatchData.score.team1Score
+//           ? 1
+//           : 0;
+//       const previousTeam2Points = previousTeam2Win * 3 + previousTeam2Draw;
+
+//       await updateDoc(team1StatsRef, {
+//         matchesPlayed: increment(-1),
+//         wins: increment(-previousTeam1Win),
+//         draws: increment(-previousTeam1Draw),
+//         losses: increment(-previousTeam1Loss),
+//         goalsFor: increment(-currentMatchData.score.team1Score),
+//         goalsAgainst: increment(-currentMatchData.score.team2Score),
+//         goalDifference: increment(
+//           -(
+//             currentMatchData.score.team1Score -
+//             currentMatchData.score.team2Score
+//           ),
+//         ),
+//         points: increment(-previousTeam1Points),
+//       });
+
+//       await updateDoc(team2StatsRef, {
+//         matchesPlayed: increment(-1),
+//         wins: increment(-previousTeam2Win),
+//         draws: increment(-previousTeam2Draw),
+//         losses: increment(-previousTeam2Loss),
+//         goalsFor: increment(-currentMatchData.score.team2Score),
+//         goalsAgainst: increment(-currentMatchData.score.team1Score),
+//         goalDifference: increment(
+//           -(
+//             currentMatchData.score.team2Score -
+//             currentMatchData.score.team1Score
+//           ),
+//         ),
+//         points: increment(-previousTeam2Points),
+//       });
+
+//       // Cập nhật thông tin trận đấu mới
 //       await updateDoc(matchRef, {
 //         'score.team1Score': team1Score,
 //         'score.team2Score': team2Score,
@@ -165,7 +249,7 @@
 //         const goalDocRef = await addDoc(
 //           collection(db, `users/${userId}/tournaments/${tournamentId}/goals`),
 //           {
-//             matchId,
+//             matchId: matchId,
 //             playerId: scorer.playerId,
 //             playerName: scorer.playerName,
 //             teamId: scorer.team === 1 ? team1Id : team2Id,
@@ -186,7 +270,7 @@
 //               `users/${userId}/tournaments/${tournamentId}/penalties`,
 //             ),
 //             {
-//               matchId,
+//               matchId: matchId,
 //               playerId: card.playerId,
 //               playerName: card.playerName,
 //               teamId: card.teamId === team1Id ? team1Id : team2Id,
@@ -201,48 +285,39 @@
 
 //       await Promise.all([...goalPromises, ...penaltyPromises]);
 
-//       // Cập nhật thông tin thống kê của đội 1
-//       const team1StatsRef = doc(
-//         db,
-//         `users/${userId}/tournaments/${tournamentId}/rankings/${team1Id}`,
-//       );
+//       // Cộng thêm các thông số của trận đấu mới
+//       const team1WinNew = team1Score > team2Score ? 1 : 0;
+//       const team1DrawNew = team1Score === team2Score ? 1 : 0;
+//       const team1LossNew = team1Score < team2Score ? 1 : 0;
+//       const team1PointsNew = team1WinNew * 3 + team1DrawNew;
 
-//       const team1Win = team1Score > team2Score ? 1 : 0;
-//       const team1Draw = team1Score === team2Score ? 1 : 0;
-//       const team1Loss = team1Score < team2Score ? 1 : 0;
-//       const team1Points = team1Win * 3 + team1Draw;
+//       const team2WinNew = team2Score > team1Score ? 1 : 0;
+//       const team2DrawNew = team2Score === team1Score ? 1 : 0;
+//       const team2LossNew = team2Score < team1Score ? 1 : 0;
+//       const team2PointsNew = team2WinNew * 3 + team2DrawNew;
 
 //       await updateDoc(team1StatsRef, {
+//         teamId: team1Id,
 //         matchesPlayed: increment(1),
-//         wins: increment(team1Win),
-//         draws: increment(team1Draw),
-//         losses: increment(team1Loss),
+//         wins: increment(team1WinNew),
+//         draws: increment(team1DrawNew),
+//         losses: increment(team1LossNew),
 //         goalsFor: increment(team1Score),
 //         goalsAgainst: increment(team2Score),
 //         goalDifference: increment(team1Score - team2Score),
-//         points: increment(team1Points),
+//         points: increment(team1PointsNew),
 //       });
 
-//       // Cập nhật thông tin thống kê của đội 2
-//       const team2StatsRef = doc(
-//         db,
-//         `users/${userId}/tournaments/${tournamentId}/rankings/${team2Id}`,
-//       );
-
-//       const team2Win = team2Score > team1Score ? 1 : 0;
-//       const team2Draw = team2Score === team1Score ? 1 : 0;
-//       const team2Loss = team2Score < team1Score ? 1 : 0;
-//       const team2Points = team2Win * 3 + team2Draw;
-
 //       await updateDoc(team2StatsRef, {
+//         teamId: team2Id,
 //         matchesPlayed: increment(1),
-//         wins: increment(team2Win),
-//         draws: increment(team2Draw),
-//         losses: increment(team2Loss),
+//         wins: increment(team2WinNew),
+//         draws: increment(team2DrawNew),
+//         losses: increment(team2LossNew),
 //         goalsFor: increment(team2Score),
 //         goalsAgainst: increment(team1Score),
 //         goalDifference: increment(team2Score - team1Score),
-//         points: increment(team2Points),
+//         points: increment(team2PointsNew),
 //       });
 
 //       res.status(200).json({ message: 'Cập nhật trận đấu thành công' });
@@ -335,6 +410,9 @@ export default async function handler(
       }
       const currentMatchData = matchSnap.data();
 
+      const previousStatus = currentMatchData.status;
+      const newStatus = 'completed'; // Có thể thay đổi tùy theo logic của bạn
+
       // Kiểm tra nếu dữ liệu không thay đổi
       const isDataChanged =
         currentMatchData.score.team1Score !== team1Score ||
@@ -394,7 +472,7 @@ export default async function handler(
       const team1Stats = team1StatsSnap.data();
       const team2Stats = team2StatsSnap.data();
 
-      // Trừ đi các thông số của trận đấu trước đó
+      // Tính toán các chỉ số trước khi cập nhật
       const previousTeam1Win =
         currentMatchData.score.team1Score > currentMatchData.score.team2Score
           ? 1
@@ -423,37 +501,137 @@ export default async function handler(
           : 0;
       const previousTeam2Points = previousTeam2Win * 3 + previousTeam2Draw;
 
-      await updateDoc(team1StatsRef, {
-        matchesPlayed: increment(-1),
-        wins: increment(-previousTeam1Win),
-        draws: increment(-previousTeam1Draw),
-        losses: increment(-previousTeam1Loss),
-        goalsFor: increment(-currentMatchData.score.team1Score),
-        goalsAgainst: increment(-currentMatchData.score.team2Score),
-        goalDifference: increment(
-          -(
-            currentMatchData.score.team1Score -
-            currentMatchData.score.team2Score
-          ),
-        ),
-        points: increment(-previousTeam1Points),
-      });
+      if (previousStatus !== 'completed' && newStatus === 'completed') {
+        // Trận đấu mới hoàn thành
+        const team1WinNew = team1Score > team2Score ? 1 : 0;
+        const team1DrawNew = team1Score === team2Score ? 1 : 0;
+        const team1LossNew = team1Score < team2Score ? 1 : 0;
+        const team1PointsNew = team1WinNew * 3 + team1DrawNew;
 
-      await updateDoc(team2StatsRef, {
-        matchesPlayed: increment(-1),
-        wins: increment(-previousTeam2Win),
-        draws: increment(-previousTeam2Draw),
-        losses: increment(-previousTeam2Loss),
-        goalsFor: increment(-currentMatchData.score.team2Score),
-        goalsAgainst: increment(-currentMatchData.score.team1Score),
-        goalDifference: increment(
-          -(
-            currentMatchData.score.team2Score -
-            currentMatchData.score.team1Score
+        const team2WinNew = team2Score > team1Score ? 1 : 0;
+        const team2DrawNew = team2Score === team1Score ? 1 : 0;
+        const team2LossNew = team2Score < team1Score ? 1 : 0;
+        const team2PointsNew = team2WinNew * 3 + team2DrawNew;
+
+        await updateDoc(team1StatsRef, {
+          matchesPlayed: increment(1),
+          wins: increment(team1WinNew),
+          draws: increment(team1DrawNew),
+          losses: increment(team1LossNew),
+          goalsFor: increment(team1Score),
+          goalsAgainst: increment(team2Score),
+          goalDifference: increment(team1Score - team2Score),
+          points: increment(team1PointsNew),
+        });
+
+        await updateDoc(team2StatsRef, {
+          matchesPlayed: increment(1),
+          wins: increment(team2WinNew),
+          draws: increment(team2DrawNew),
+          losses: increment(team2LossNew),
+          goalsFor: increment(team2Score),
+          goalsAgainst: increment(team1Score),
+          goalDifference: increment(team2Score - team1Score),
+          points: increment(team2PointsNew),
+        });
+      } else if (previousStatus === 'completed' && newStatus === 'completed') {
+        // Trận đấu đã hoàn thành và vẫn hoàn thành (cập nhật kết quả)
+        // Trừ đi các chỉ số của kết quả cũ
+        await updateDoc(team1StatsRef, {
+          wins: increment(-previousTeam1Win),
+          draws: increment(-previousTeam1Draw),
+          losses: increment(-previousTeam1Loss),
+          goalsFor: increment(-currentMatchData.score.team1Score),
+          goalsAgainst: increment(-currentMatchData.score.team2Score),
+          goalDifference: increment(
+            -(
+              currentMatchData.score.team1Score -
+              currentMatchData.score.team2Score
+            ),
           ),
-        ),
-        points: increment(-previousTeam2Points),
-      });
+          points: increment(-previousTeam1Points),
+        });
+
+        await updateDoc(team2StatsRef, {
+          wins: increment(-previousTeam2Win),
+          draws: increment(-previousTeam2Draw),
+          losses: increment(-previousTeam2Loss),
+          goalsFor: increment(-currentMatchData.score.team2Score),
+          goalsAgainst: increment(-currentMatchData.score.team1Score),
+          goalDifference: increment(
+            -(
+              currentMatchData.score.team2Score -
+              currentMatchData.score.team1Score
+            ),
+          ),
+          points: increment(-previousTeam2Points),
+        });
+
+        // Cộng lại các chỉ số mới
+        const team1WinNew = team1Score > team2Score ? 1 : 0;
+        const team1DrawNew = team1Score === team2Score ? 1 : 0;
+        const team1LossNew = team1Score < team2Score ? 1 : 0;
+        const team1PointsNew = team1WinNew * 3 + team1DrawNew;
+
+        const team2WinNew = team2Score > team1Score ? 1 : 0;
+        const team2DrawNew = team2Score === team1Score ? 1 : 0;
+        const team2LossNew = team2Score < team1Score ? 1 : 0;
+        const team2PointsNew = team2WinNew * 3 + team2DrawNew;
+
+        await updateDoc(team1StatsRef, {
+          wins: increment(team1WinNew),
+          draws: increment(team1DrawNew),
+          losses: increment(team1LossNew),
+          goalsFor: increment(team1Score),
+          goalsAgainst: increment(team2Score),
+          goalDifference: increment(team1Score - team2Score),
+          points: increment(team1PointsNew),
+        });
+
+        await updateDoc(team2StatsRef, {
+          wins: increment(team2WinNew),
+          draws: increment(team2DrawNew),
+          losses: increment(team2LossNew),
+          goalsFor: increment(team2Score),
+          goalsAgainst: increment(team1Score),
+          goalDifference: increment(team2Score - team1Score),
+          points: increment(team2PointsNew),
+        });
+      } else if (previousStatus === 'completed' && newStatus !== 'completed') {
+        // Trận đấu thay đổi từ hoàn thành sang chưa hoàn thành
+        // Trừ đi các chỉ số của kết quả cũ
+        await updateDoc(team1StatsRef, {
+          matchesPlayed: increment(-1),
+          wins: increment(-previousTeam1Win),
+          draws: increment(-previousTeam1Draw),
+          losses: increment(-previousTeam1Loss),
+          goalsFor: increment(-currentMatchData.score.team1Score),
+          goalsAgainst: increment(-currentMatchData.score.team2Score),
+          goalDifference: increment(
+            -(
+              currentMatchData.score.team1Score -
+              currentMatchData.score.team2Score
+            ),
+          ),
+          points: increment(-previousTeam1Points),
+        });
+
+        await updateDoc(team2StatsRef, {
+          matchesPlayed: increment(-1),
+          wins: increment(-previousTeam2Win),
+          draws: increment(-previousTeam2Draw),
+          losses: increment(-previousTeam2Loss),
+          goalsFor: increment(-currentMatchData.score.team2Score),
+          goalsAgainst: increment(-currentMatchData.score.team1Score),
+          goalDifference: increment(
+            -(
+              currentMatchData.score.team2Score -
+              currentMatchData.score.team1Score
+            ),
+          ),
+          points: increment(-previousTeam2Points),
+        });
+      }
 
       // Cập nhật thông tin trận đấu mới
       await updateDoc(matchRef, {
@@ -485,7 +663,7 @@ export default async function handler(
         'penalties.team2.redCards': redCards.filter(
           (card) => card.teamId === team2Id,
         ).length,
-        status: 'completed', // Cập nhật trạng thái trận đấu
+        status: newStatus, // Cập nhật trạng thái trận đấu
       });
 
       // Xóa tất cả các bàn thắng của trận đấu trước đó
@@ -511,7 +689,7 @@ export default async function handler(
         const goalDocRef = await addDoc(
           collection(db, `users/${userId}/tournaments/${tournamentId}/goals`),
           {
-            matchId: matchId,
+            matchId,
             playerId: scorer.playerId,
             playerName: scorer.playerName,
             teamId: scorer.team === 1 ? team1Id : team2Id,
@@ -532,11 +710,13 @@ export default async function handler(
               `users/${userId}/tournaments/${tournamentId}/penalties`,
             ),
             {
-              matchId: matchId,
+              matchId,
               playerId: card.playerId,
               playerName: card.playerName,
               teamId: card.teamId === team1Id ? team1Id : team2Id,
-              type: yellowCards.includes(card) ? 'yellow' : 'red',
+              type: yellowCards.some((yc) => yc.cardId === card.cardId)
+                ? 'yellow'
+                : 'red',
               timestamp: serverTimestamp(),
             },
           );
@@ -546,41 +726,6 @@ export default async function handler(
       );
 
       await Promise.all([...goalPromises, ...penaltyPromises]);
-
-      // Cộng thêm các thông số của trận đấu mới
-      const team1WinNew = team1Score > team2Score ? 1 : 0;
-      const team1DrawNew = team1Score === team2Score ? 1 : 0;
-      const team1LossNew = team1Score < team2Score ? 1 : 0;
-      const team1PointsNew = team1WinNew * 3 + team1DrawNew;
-
-      const team2WinNew = team2Score > team1Score ? 1 : 0;
-      const team2DrawNew = team2Score === team1Score ? 1 : 0;
-      const team2LossNew = team2Score < team1Score ? 1 : 0;
-      const team2PointsNew = team2WinNew * 3 + team2DrawNew;
-
-      await updateDoc(team1StatsRef, {
-        teamId: team1Id,
-        matchesPlayed: increment(1),
-        wins: increment(team1WinNew),
-        draws: increment(team1DrawNew),
-        losses: increment(team1LossNew),
-        goalsFor: increment(team1Score),
-        goalsAgainst: increment(team2Score),
-        goalDifference: increment(team1Score - team2Score),
-        points: increment(team1PointsNew),
-      });
-
-      await updateDoc(team2StatsRef, {
-        teamId: team2Id,
-        matchesPlayed: increment(1),
-        wins: increment(team2WinNew),
-        draws: increment(team2DrawNew),
-        losses: increment(team2LossNew),
-        goalsFor: increment(team2Score),
-        goalsAgainst: increment(team1Score),
-        goalDifference: increment(team2Score - team1Score),
-        points: increment(team2PointsNew),
-      });
 
       res.status(200).json({ message: 'Cập nhật trận đấu thành công' });
     } catch (error) {

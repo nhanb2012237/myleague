@@ -1,355 +1,5 @@
-// 'use client';
-// import { useEffect, useState } from 'react';
-// import MiniCalendar from 'components/calendar/MiniCalendar';
-// import WeeklyRevenue from 'components/admin/default/WeeklyRevenue';
-// import TotalSpent from 'components/admin/default/TotalSpent';
-// import axios from 'axios';
-// import { useParams, useRouter } from 'next/navigation';
-// import { getAuth, onAuthStateChanged } from 'firebase/auth';
-// import Widget from 'components/widget/Widget';
-// import TeamStatsTable from 'components/admin/default/TeamStatsTable';
-// import PlayersTable from 'components/admin/default/PlayersTable';
-
-// import { GiSoccerField } from 'react-icons/gi';
-// import { GiSoccerBall } from 'react-icons/gi';
-// import { TbCards } from 'react-icons/tb';
-// import { RiTeamFill } from 'react-icons/ri';
-// import { FaUser } from 'react-icons/fa6';
-// import { set } from 'date-fns';
-// import { Player } from 'models/entities';
-// import Spinner from 'components/Loader/Spinner';
-
-// const Dashboard = () => {
-//   const [matches, setMatches] = useState([]);
-//   const { tournamentId, teamId } = useParams();
-//   const [userId, setUserId] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [teams, setTeams] = useState([]);
-//   const [players, setPlayers] = useState([]);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [totalPages, setTotalPages] = useState(1);
-//   const [pageSize] = useState(100);
-//   const [penalties, setPenalties] = useState({});
-//   const [tableData, setTableData] = useState([]);
-//   const [totalcard, setTotalcard] = useState([]);
-//   const [goals, setGoals] = useState([]);
-//   const [topPlayers, setTopPlayers] = useState<Player[]>([]);
-
-//   useEffect(() => {
-//     const auth = getAuth();
-//     const unsubscribe = onAuthStateChanged(auth, (user) => {
-//       if (user) {
-//         setUserId(user.uid);
-//         setLoading(false);
-//       } else {
-//         console.log('User not logged in');
-//       }
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchTeams = async () => {
-//       setLoading(true);
-//       try {
-//         const response = await axios.get('/api/teams/getTeam', {
-//           params: {
-//             userId,
-//             tournamentId,
-//           },
-//         });
-//         setTeams(response.data.teams);
-//       } catch (error) {
-//         console.error('Không thể lấy danh sách đội:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     if (userId && tournamentId) fetchTeams();
-//   }, [userId, tournamentId]);
-
-//   useEffect(() => {
-//     const fetchMatches = async () => {
-//       try {
-//         const response = await axios.get(`/api/matches/getMatch`, {
-//           params: {
-//             tournamentId,
-//             userId,
-//           },
-//         });
-//         setMatches(response.data.matches);
-//       } catch (error) {
-//         console.error('Error fetching matches:', error);
-//       }
-//     };
-//     if (userId && tournamentId) fetchMatches();
-//     setLoading(false);
-//   }, [userId, tournamentId]);
-
-//   useEffect(() => {
-//     const fetchPlayers = async () => {
-//       try {
-//         const response = await axios.get('/api/players/getPlayers', {
-//           params: {
-//             userId,
-//             tournamentId,
-//             page: currentPage,
-//             pageSize,
-//           },
-//         });
-//         setPlayers(response.data.players);
-//         setTotalPages(response.data.totalPages || 1);
-//       } catch (error) {
-//         console.error('Failed to fetch players:', error);
-//       }
-//     };
-//     if (userId && tournamentId) fetchPlayers();
-//     setLoading(false);
-//   }, [userId, tournamentId]);
-
-//   useEffect(() => {
-//     const fetchPenalties = async () => {
-//       try {
-//         const response = await axios.get('/api/penalties/getPenalties', {
-//           params: {
-//             userId,
-//             tournamentId,
-//           },
-//         });
-//         const penaltiesData = response.data;
-//         setTotalcard(penaltiesData);
-//         console.log('penalties:', penaltiesData);
-
-//         const penaltiesByTeam = penaltiesData.reduce((acc, penalty) => {
-//           const teamId = penalty.teamId;
-//           if (!acc[teamId]) {
-//             acc[teamId] = { yellowCards: 0, redCards: 0 };
-//           }
-//           if (penalty.type === 'yellow') {
-//             acc[teamId].yellowCards += 1;
-//           } else if (penalty.type === 'red') {
-//             acc[teamId].redCards += 1;
-//           }
-//           return acc;
-//         }, {});
-//         setPenalties(penaltiesByTeam);
-//       } catch (error) {
-//         console.error('Failed to fetch players:', error);
-//       }
-//     };
-//     if (userId && tournamentId) fetchPenalties();
-//     setLoading(false);
-//   }, [userId, tournamentId]);
-
-//   useEffect(() => {
-//     const fetchGoals = async () => {
-//       try {
-//         const response = await axios.get('/api/goals/getGoals', {
-//           params: {
-//             userId,
-//             tournamentId,
-//           },
-//         });
-//         setGoals(response.data);
-//       } catch (error) {
-//         console.error('Failed to fetch goals:', error);
-//       }
-//     };
-//     if (userId && tournamentId) fetchGoals();
-//   }, [userId, tournamentId]);
-
-//   // Tính toán các giá trị cần thiết cho Widget
-//   const totalMatches = matches.length;
-//   const totalGoals = matches.reduce((sum, match) => {
-//     const team1Goals = match.opponent1.playerScores.reduce(
-//       (sum, player) => sum + player.goals,
-//       0,
-//     );
-//     const team2Goals = match.opponent2.playerScores.reduce(
-//       (sum, player) => sum + player.goals,
-//       0,
-//     );
-//     return sum + team1Goals + team2Goals;
-//   }, 0);
-//   const totalCards = matches.reduce((sum, match) => {
-//     const team1Cards = match.opponent1.playerScores.reduce(
-//       (sum, player) => sum + (player.cards || 0),
-//       0,
-//     );
-//     const team2Cards = match.opponent2.playerScores.reduce(
-//       (sum, player) => sum + (player.cards || 0),
-//       0,
-//     );
-//     return sum + team1Cards + team2Cards;
-//   }, 0);
-
-//   const topScoringTeam = teams.reduce(
-//     (max, team) => {
-//       const teamGoals = matches.reduce((sum, match) => {
-//         const team1Goals =
-//           match.opponent1.teamId === team.id
-//             ? match.opponent1.playerScores.reduce(
-//                 (sum, player) => sum + player.goals,
-//                 0,
-//               )
-//             : 0;
-//         const team2Goals =
-//           match.opponent2.teamId === team.id
-//             ? match.opponent2.playerScores.reduce(
-//                 (sum, player) => sum + player.goals,
-//                 0,
-//               )
-//             : 0;
-//         return sum + team1Goals + team2Goals;
-//       }, 0);
-//       return teamGoals > max.goals
-//         ? { teamName: team.teamName, goals: teamGoals }
-//         : max;
-//     },
-//     { teamName: 'Không xác định', goals: 0 },
-//   );
-
-//   const mostCardedTeam = Object.keys(penalties).reduce(
-//     (max, teamId) => {
-//       const teamPenalties = penalties[teamId];
-//       const totalCards = teamPenalties.yellowCards + teamPenalties.redCards * 2;
-//       return totalCards > max.cards
-//         ? {
-//             teamName:
-//               teams.find((team) => team.teamId === teamId)?.teamName ||
-//               'Không xác định',
-//             cards: totalCards,
-//           }
-//         : max;
-//     },
-//     { teamName: 'Không xác định', cards: 0 },
-//   );
-
-//   const topScoringPlayer = players.reduce(
-//     (max, player) => (player.goals > max.goals ? player : max),
-//     { playerName: 'Không xác định', goals: 0 },
-//   );
-
-//   useEffect(() => {
-//     if (
-//       Array.isArray(players) &&
-//       players.length > 0 &&
-//       Array.isArray(goals) &&
-//       goals.length > 0
-//     ) {
-//       const playerGoals = players.map((player) => {
-//         const totalGoals = goals
-//           .filter((goal) => goal.playerId === player.playerId)
-//           .reduce((sum, goal) => sum + goal.goals, 0);
-//         return { ...player, goals: totalGoals };
-//       });
-
-//       // Sort players by goals and take the top 3
-//       const sortedPlayers = playerGoals
-//         .sort((a, b) => b.goals - a.goals)
-//         .slice(0, 1);
-//       setTopPlayers(sortedPlayers);
-//     }
-//   }, [players, goals]);
-
-//   if (loading) {
-//     return <Spinner />;
-//   }
-
-//   return (
-//     <div>
-//       {/* Card widget */}
-//       <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-6">
-//         <Widget
-//           icon={<GiSoccerField className="h-7 w-7" />}
-//           title={'Tổng số trận'}
-//           subtitle={totalMatches.toString()}
-//         />
-//         <Widget
-//           icon={<GiSoccerBall className="h-6 w-6" />}
-//           title={'Tổng số bàn thắng'}
-//           subtitle={totalGoals.toString()}
-//         />
-//         <Widget
-//           icon={<TbCards className="h-7 w-7" />}
-//           title={'Tổng số thẻ phạt'}
-//           subtitle={totalcard.length.toString()}
-//         />
-//         <Widget
-//           icon={<RiTeamFill className="h-6 w-6" />}
-//           title={'Đội bóng ghi bàn nhiều nhất'}
-//           subtitle={topScoringTeam.teamName}
-//         />
-//         <Widget
-//           icon={<TbCards className="h-7 w-7" />}
-//           title={'Đội bóng nhận nhiều thẻ nhất'}
-//           subtitle={mostCardedTeam.teamName}
-//         />
-//         <Widget
-//           icon={<FaUser className="h-6 w-6" />}
-//           title={'Cầu thủ ghi bàn nhiều nhất'}
-//           subtitle={`${topPlayers.map(
-//             (name) => name.playerName,
-//           )} (${topPlayers.map((name) => name.goals)} bàn)`}
-//         />
-//       </div>
-
-//       {/* Charts */}
-
-//       <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
-//         <TotalSpent
-//           userId={userId}
-//           tournamentId={tournamentId}
-//           setLoading={setLoading}
-//         />
-//         {teams.length > 0 && (
-//           <WeeklyRevenue
-//             setLoading={setLoading}
-//             teams={teams}
-//             goals={goals}
-//             totalcard={totalcard}
-//           />
-//         )}
-//       </div>
-
-//       {/* Tables & Charts */}
-
-//       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-//         {/* team */}
-//         <div>
-//           <TeamStatsTable
-//             players={players}
-//             teams={teams}
-//             goals={goals}
-//             totalcard={totalcard}
-//             setLoading={setLoading}
-//           />
-//         </div>
-
-//         {/* Traffic chart & Pie Chart */}
-
-//         <div className="grid grid-cols-1 gap-5 rounded-[20px] xl:grid-cols-1">
-//           <PlayersTable
-//             userId={userId}
-//             tournamentId={tournamentId}
-//             setLoading={setLoading}
-//           />
-//         </div>
-
-//         {/* Task chart & Calendar */}
-
-//         {/* <div className="grid grid-cols-1 gap-5 rounded-[20px] md:grid-cols-2">
-//           <TaskCard />
-//           <div className="grid grid-cols-1 rounded-[20px]">
-//             <MiniCalendar />
-//           </div>
-//         </div> */}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
 'use client';
+import useSWR from 'swr';
 import { useEffect, useState } from 'react';
 import MiniCalendar from 'components/calendar/MiniCalendar';
 import WeeklyRevenue from 'components/admin/default/WeeklyRevenue';
@@ -394,6 +44,7 @@ const Dashboard = () => {
     key: 'playerName',
     direction: 'asc',
   });
+  const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
   const TABLE_HEAD = [
     { label: 'STT', key: 'stt' },
@@ -651,31 +302,6 @@ const Dashboard = () => {
     };
   }, [userId, tournamentId, setLoading]);
 
-  // {
-  //   /* Dữ liệu xếp hạng */
-  // }
-
-  // // Kết hợp dữ liệu đội và xếp hạng
-  // const combinedData = rankings.map((ranking) => {
-  //   const team = teams.find((team) => team.id === ranking.teamId);
-  //   return {
-  //     ...ranking,
-  //     ...team,
-  //   };
-  // });
-
-  // // Sắp xếp dữ liệu kết hợp
-  // combinedData.sort((a, b) => (b.points || 0) - (a.points || 0));
-  // // lấy tên đội
-  // const getTeamName = (teamId: string) => {
-  //   const team = teams.find((team) => team.id === teamId);
-  //   return team ? team.teamName : 'Không xác định';
-  // };
-
-  // {
-  //   /* Dữ liệu xếp hạng */
-  // }
-
   useEffect(() => {
     if (teams.length > 0) {
       // Kết hợp dữ liệu đội và xếp hạng
@@ -862,6 +488,7 @@ const Dashboard = () => {
     return sum + team1Cards + team2Cards;
   }, 0);
 
+  // lấy số bàn thắng của cầu thủ
   const topScoringTeam = teams.reduce(
     (max, team) => {
       const teamGoals = matches.reduce((sum, match) => {
@@ -887,7 +514,7 @@ const Dashboard = () => {
     },
     { teamName: 'Không xác định', goals: 0 },
   );
-
+  // lấy số thẻ phạt của đội
   const mostCardedTeam = Object.keys(penalties).reduce(
     (max, teamId) => {
       const teamPenalties = penalties[teamId];
@@ -908,7 +535,7 @@ const Dashboard = () => {
     (max, player) => (player.goals > max.goals ? player : max),
     { playerName: 'Không xác định', goals: 0 },
   );
-
+  // tính số bàn thắng của cầu thủ
   useEffect(() => {
     if (
       Array.isArray(players) &&

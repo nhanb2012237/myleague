@@ -13,6 +13,7 @@ interface TopPlayersProps {
   userId: string;
   tournamentId: string;
   setLoading: (loading: boolean) => void;
+  reload: boolean;
 }
 
 const TopPlayers: React.FC<TopPlayersProps> = ({
@@ -20,6 +21,7 @@ const TopPlayers: React.FC<TopPlayersProps> = ({
   userId,
   tournamentId,
   setLoading,
+  reload,
 }) => {
   console.log('TopPlayersProps:', userId);
   const [matches, setMatches] = useState<Match[]>([]);
@@ -42,7 +44,7 @@ const TopPlayers: React.FC<TopPlayersProps> = ({
     };
     fetchMatches();
     setLoading(false);
-  }, [userId, tournamentId, onMatchSelect]);
+  }, [userId, tournamentId, onMatchSelect, reload]);
 
   const handleMatchSelect = (match) => {
     setSelectedMatch(match);

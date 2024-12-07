@@ -40,16 +40,12 @@ export default function UserLinks() {
           <div className="mt-3 h-px w-full bg-gray-200 dark:bg-white/20 " />
 
           <div className="ml-4 mt-3 flex flex-col">
-            <a
-              href=" "
-              className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
-            ></a>
-            <a
+            <Link
               href="/tournament"
               className="mt-3 text-sm text-gray-800 dark:text-white hover:dark:text-white"
             >
               Tournament List
-            </a>
+            </Link>
             <a
               onClick={handleLogout}
               href=" "

@@ -31,13 +31,14 @@
     ],
     "strict": false
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
   "include": [
     "./src",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "next.config.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "node_modules/face-api.js"
   ]
 }

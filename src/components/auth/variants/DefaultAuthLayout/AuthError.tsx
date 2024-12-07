@@ -20,7 +20,7 @@ export default function AuthError({ errorCode }: { errorCode: string }) {
       break;
     case 'auth/email-already-in-use':
       errorMessage =
-        'This email is already in use. Please sign in with this email or use a different one.';
+        'Địa chỉ email này đã được sử dụng! Vui lòng nhập địa chỉ email khác.';
       break;
     case 'auth/weak-password':
       errorMessage =

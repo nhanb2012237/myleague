@@ -254,6 +254,17 @@ const YellowCardComponent: React.FC<YellowCardComponentProps> = ({
     ]);
   }, [yellowCardScorersTeam1, yellowCardScorersTeam2, setYellowCardScorers]);
 
+  useEffect(() => {
+    const allSelected =
+      yellowCardScorersTeam1.every((scorer) => scorer.playerId) &&
+      yellowCardScorersTeam2.every((scorer) => scorer.playerId);
+    if (!allSelected) {
+      setError('Vui lòng chọn cầu thủ cho tất cả các thẻ vàng.');
+    } else {
+      setError('');
+    }
+  }, [yellowCardScorersTeam1, yellowCardScorersTeam2]);
+
   return (
     <div>
       {error && <Alert severity="error">{error}</Alert>}

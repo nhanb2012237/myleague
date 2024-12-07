@@ -9,10 +9,7 @@ export default function ConfirmDeletionModal({
   id: string;
 }) {
   return (
-    <Modal
-      handleConfirm={handleConfirm}
-      trigger="Xoá"
-    >
+    <Modal handleConfirm={handleConfirm} trigger="Xoá">
       <Modal.Header>Xác nhận xóa</Modal.Header>
       <Modal.Body>
         Bạn có chắc chắn xóa ? Hành động này không thể hoàn tác.

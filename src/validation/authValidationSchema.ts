@@ -5,10 +5,10 @@ export const signUpValidationSchema = Yup.object().shape({
     .min(4, 'Tên phải chứa ít nhất 4 ký tự')
     .required('Vui lòng nhập tên đăng nhập'),
   email: Yup.string()
-    .required('không được để trống')
+    .required('Vui lòng nhập địa chỉ email')
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'địa chỉ email không hợp lệ'),
   password: Yup.string()
-    .required('không được để trống')
+    .required('Vui lòng nhập mật khẩu')
     .min(8, 'Mật khẩu phải chứa ít nhất 8 ký tự')
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,

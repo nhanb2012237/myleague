@@ -53,11 +53,11 @@ const MatchUser: React.FC<TopPlayersProps> = ({
         </div>
       </div>
 
-      <div className="border-slate-100 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 mt-5 max-h-60 overflow-y-auto border-t p-3 text-center">
+      <div className="border-slate-100 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100 mt-5 max-h-80 overflow-y-auto border-t p-3 text-center">
         {matches.map((match) => (
           <div
             key={match.matchId}
-            className="text-slate-600 mb-4 mt-2  grid max-w-lg grid-cols-7 items-center justify-center gap-5 rounded-xl border border-gray-100 bg-white p-2 font-light leading-normal transition hover:shadow-2xl hover:shadow-gray-600/10 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none md:p-4"
+            className="text-slate-800 mb-4 mt-2  grid max-w-lg grid-cols-7 items-center justify-center gap-5 rounded-xl border border-gray-100 bg-white p-2 font-light leading-normal transition hover:shadow-2xl hover:shadow-gray-600/10 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none md:p-4"
             onClick={() => handleMatchSelect(match)} // Gọi hàm khi nhấn vào trận đấu
           >
             <div className="col-span-3 flex flex-col items-center justify-center gap-3">

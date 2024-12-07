@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import Spinner from 'components/Loader/Spinner';
 import { Player } from 'models/entities';
 import NoPlayerData from 'components/admin/players/NoPlayers';
+import NoPlayerSearch from 'components/admin/players/NoPlayerSearch';
 
 const TABLE_HEAD = [
   { label: 'Tên cầu thủ', key: 'playerName' },
@@ -200,8 +201,12 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ tournamentId, userId }) => {
 
   return (
     <div>
-      {players.length === 0 ? (
-        <NoPlayerData />
+      {filteredPlayers.length === 0 ? (
+        searchQuery ? (
+          <NoPlayerData />
+        ) : (
+          <NoPlayerSearch />
+        )
       ) : (
         <Card className="h-full w-full">
           <CardHeader floated={false} shadow={false} className="rounded-none">

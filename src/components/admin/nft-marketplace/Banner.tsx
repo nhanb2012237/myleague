@@ -15,6 +15,8 @@ interface BannerProps {
   userId: string;
   tournamentId: string;
   setLoading: (loading: boolean) => void;
+  onReload: () => void; // Thêm prop onReload
+  reload: boolean; // Thêm prop reload
 }
 
 const Banner: React.FC<BannerProps> = ({
@@ -22,6 +24,8 @@ const Banner: React.FC<BannerProps> = ({
   userId,
   tournamentId,
   setLoading,
+  onReload,
+  reload,
 }) => {
   const [playersTeam1, setPlayersTeam1] = useState<Player[]>([]);
   // const [loading, setLoading] = useState(true);
@@ -160,6 +164,8 @@ const Banner: React.FC<BannerProps> = ({
           logo1={match.opponent1.teamLogo}
           logo2={match.opponent2.teamLogo}
           matchId={match.matchId}
+          setIsEditing={setIsEditing}
+          onReload={onReload}
         />
       ) : (
         <CompletedMatchDialog
@@ -175,6 +181,7 @@ const Banner: React.FC<BannerProps> = ({
           matchId={match.matchId}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
+          onReload={onReload}
         />
       )}
     </div>

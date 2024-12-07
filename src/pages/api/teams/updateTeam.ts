@@ -95,6 +95,7 @@ export default async function updateTeamHandler(
       players,
       teamLogo,
       address,
+      email,
     } = req.body;
 
     if (!tournamentId || !userId || !teamId) {
@@ -123,7 +124,8 @@ export default async function updateTeamHandler(
       coach: coach || existingTeamData.coach, // Giữ nguyên coach nếu không có trong request
       players: players || existingTeamData.players, // Giữ nguyên players nếu không có
       teamLogo: teamLogo || existingTeamData.teamLogo, // Giữ nguyên teamLogo nếu không có
-      address: address || existingTeamData.address, // Giữ nguyên address nếu không có
+      address: address || existingTeamData.address,
+      email: email || existingTeamData.email,
     };
 
     // Cập nhật thông tin team trong Firestore

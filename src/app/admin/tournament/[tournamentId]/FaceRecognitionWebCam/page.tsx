@@ -54,11 +54,12 @@ function FaceRecognition() {
   const webcamRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // lấy thông tin user
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
-        console.log('userId ơ day:', userId);
+        // console.log('userId ơ day:', userId);
       } else {
         // router.push('/auth/login');
       }
@@ -67,7 +68,7 @@ function FaceRecognition() {
     return () => unsubscribe();
   }, []);
 
-  // Theo dõi cả userId và tournamentId để xác định khi nào sẵn sàng gọi API
+  // Theo dõi cả userId và tournamentId
   useEffect(() => {
     if (userId && tournamentId) {
       setReadyToFetch(true);
@@ -95,8 +96,8 @@ function FaceRecognition() {
         }
       }
     }
-    // lấy lịch sử nhận diện
 
+    // lấy lịch sử nhận diện cầu thủ
     async function fetchRecognitionHistory() {
       if (readyToFetch) {
         try {
@@ -132,15 +133,17 @@ function FaceRecognition() {
     console.log('Recognition HistoryID:', recognizedPlayerIds);
   }, [recognizedPlayerIds]);
 
+  // Load models khi userId thay đổi
   useEffect(() => {
     if (userId) {
       const loadModels = async () => {
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-          // faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
           faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
-          // faceapi.nets.faceExpressionNet.loadFromUri('/models'),
+          faceapi.nets.faceExpressionNet.loadFromUri('/models'),
         ]);
+
         const labeledFaceDescriptors = await loadLabeledFaceDescriptors(
           userId,
           tournamentId as string,
@@ -149,7 +152,7 @@ function FaceRecognition() {
           const faceDescriptors = labeledFaceDescriptors.map(
             (desc) => desc.labeledFaceDescriptor,
           );
-          setFaceMatcher(new faceapi.FaceMatcher(faceDescriptors, 0.5)); // số 0.5 là ngưỡng để xác định face số càng nhỏ thì càng chính xác
+          setFaceMatcher(new faceapi.FaceMatcher(faceDescriptors, 0.5)); // Khởi tạo một instance của FaceMatcher với các face descriptors đã được gắn nhãn (labeled) và thiết lập ngưỡng tương đồng (0.5).
         } else {
           console.error('Không tìm thấy face descriptors');
           toast.error('Không tìm thấy face descriptors');
@@ -161,6 +164,7 @@ function FaceRecognition() {
     }
   }, [userId, tournamentId]);
 
+  // lấy thông tin cầu thủ từ API
   const loadLabeledFaceDescriptors = async (
     userId: string,
     tournamentId: string,
@@ -222,28 +226,31 @@ function FaceRecognition() {
     }
   };
 
-  //phần nhận dạng gương mặt và vẽ lên m
+  // phần nhận dạng gương mặt và vẽ lên m
   const detectFace = () => {
     if (!webcamRef.current || !canvasRef.current) return;
 
-    const webcam = webcamRef.current;
-    const canvas = canvasRef.current;
+    const webcam = webcamRef.current; // tham chiếu đến webcam
+    const canvas = canvasRef.current; // tham chiếu đến canvas
 
+    // Lấy Các Tham Chiếu và Thiết Lập Vòng Lặp Phát Hiện Khuôn Mặt
     const id = setInterval(async () => {
       setDetectionStatus('detecting');
-      const detections = await faceapi
+
+      const detections = await faceapi // Phát hiện khuôn mặt
         .detectSingleFace(
           webcam,
           new faceapi.TinyFaceDetectorOptions({
-            inputSize: 160,
-            scoreThreshold: 0.5,
+            // Sử dụng mô hình nhận diện khuôn mặt nhỏ
+            inputSize: 160, // Kích thước đầu vào cho mô hình phát hiện khuôn mặt (160x160).
+            scoreThreshold: 0.5, // Ngưỡng xác suất để xác định một phát hiện có hợp lệ hay không (0.5).
           }),
         )
         .withFaceLandmarks()
         .withFaceExpressions()
         .withFaceDescriptor();
-      console.log('Detections:', detections);
 
+      // Xử Lý Sau Khi Phát Hiện Khuôn Mặt
       if (detections) {
         console.log('Detections:', detections);
         const resizedDetections = faceapi.resizeResults(detections, {
@@ -256,9 +263,11 @@ function FaceRecognition() {
           faceapi.draw.drawDetections(canvas, resizedDetections);
           if (faceMatcher && detections.descriptor) {
             console.log('Face matcher1:', detections.descriptor);
+
             const bestMatch = faceMatcher?.findBestMatch(
               detections?.descriptor,
-            );
+            ); // So sánh descriptor của khuôn mặt được phát hiện với các labeledFaceDescriptors để tìm kết quả phù hợp nhất.
+            // so gương mặt mới với các gương mặt đã được gắn nhãn
             const text = bestMatch.toString();
             const anchor = {
               x: resizedDetections.detection.box.x,
@@ -279,15 +288,14 @@ function FaceRecognition() {
             );
             drawBox.draw(canvas);
 
-            // Find the recognized player information
+            // Nhận Diện Người Dùng
             const recognizedPlayerInfo = labeledFaceDescriptors.find(
               (desc) => desc.labeledFaceDescriptor.label === bestMatch.label,
             )?.playerInfo;
 
             if (recognizedPlayerInfo) {
-              setRecognizedPlayer(recognizedPlayerInfo);
-              setDetectionStatus('recognized');
-
+              setRecognizedPlayer(recognizedPlayerInfo); // tìm thông tin cầu thủ từ labeledFaceDescriptors
+              setDetectionStatus('recognized'); // Đặt trạng thái nhận diện
               // Chỉ gọi API khi nhận diện được cầu thủ mới
               const isInHistory = recognizedPlayerIds.includes(
                 recognizedPlayerInfo.playerId,
@@ -333,10 +341,11 @@ function FaceRecognition() {
         setIsConfirming(true); // Đặt trạng thái xác nhận
         clearInterval(id); // Tạm dừng quá trình nhận diện
       }
-    }, 100);
-    setIntervalId(id);
+    }, 100); // Thiết lập một vòng lặp chạy mỗi 100ms để liên tục phát hiện khuôn mặt từ luồng video.
+    setIntervalId(id); //
   };
 
+  // bắt đầu và kết thúc nhận diện
   const handleOn = async () => {
     if (modelsLoaded) {
       setCamOn(true);
@@ -346,7 +355,7 @@ function FaceRecognition() {
       toast.error('Models are still loading. Please wait.');
     }
   };
-
+  // kết thúc nhận diện
   const handleOff = async () => {
     setCamOn(false);
     stopVideo();
@@ -354,14 +363,14 @@ function FaceRecognition() {
     setRecognizedPlayer(null);
     setIsConfirming(false); // Reset trạng thái xác nhận
   };
-
+  // xác nhận cầu thủ
   const handleConfirm = () => {
     setRecognizedPlayer(null);
     setDetectionStatus('idle');
     setIsConfirming(false);
     detectFace(); // Bắt đầu lại quá trình nhận diện
   };
-
+  // bắt đầu video
   const startVideo = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -376,7 +385,7 @@ function FaceRecognition() {
       toast.error('Cannot access webcam');
     }
   };
-
+  // kết thúc video
   const stopVideo = () => {
     clearInterval(intervalId);
     if (webcamRef.current && webcamRef.current.srcObject) {
@@ -390,6 +399,7 @@ function FaceRecognition() {
     setIsConfirming(false); // Reset trạng thái xác nhận
   };
 
+  // lấy thông tin đội bóng từ API
   useEffect(() => {
     const teamNameMapping = teams.reduce((acc, team) => {
       acc[team.id] = team.teamName;

@@ -6,7 +6,9 @@ import { Avatar, Typography } from '@material-tailwind/react';
 import Loader from '../../Loader/Loader';
 // import Default from 'components/auth/variants/UserPlayerLayout/index';
 import Default from 'components/auth/variants/DefaultAuthLayout';
-
+import ArrowIcon from '../../icons/ArrowIcon';
+import Button from 'components/Button/Button';
+import Link from 'next/link';
 interface Match {
   id: string;
   team1: { name: string };
@@ -24,14 +26,15 @@ interface Tournament {
   matches: Match[];
   userId: string;
 }
-
-interface User {
+interface user {
   id: string;
-  name: string;
+  displayName: string;
+  email: string;
+  userId: string;
 }
 
 interface TournamentsListProps {
-  tournaments: { user: User; tournaments: Tournament[] }[];
+  tournaments: { user: user; tournaments: Tournament[] }[];
 }
 
 const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
@@ -39,6 +42,7 @@ const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
     null,
   );
   const router = useRouter();
+  console.log('tournaments1:', tournaments);
 
   const handleClick = (tournamentId: string, userId: string) => {
     setLoadingTournamentId(tournamentId);
@@ -51,39 +55,155 @@ const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
   return (
     <Default
       maincard={
-        <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[600px]">
+        // <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[600px]">
+        //   {tournaments?.map(({ user, tournaments }) => (
+        //     <div key={user?.id} className="mt-5 h-full w-full">
+        //       <Typography variant="h3" className="mb-5">
+        //         {user?.displayName}
+        //       </Typography>
+        //       {tournaments?.map((tournament) => {
+        //         const numberOfTeams =
+        //           tournament.numberOfTeams || 'Không có số lượng đội';
+        //         const startDate = tournament.startDate?.seconds
+        //           ? format(
+        //               new Date(tournament.startDate.seconds * 1000),
+        //               'dd MMM yyyy',
+        //             )
+        //           : 'Ngày không được cung cấp';
+        //         const endDate = tournament.endDate?.seconds
+        //           ? format(
+        //               new Date(tournament.endDate.seconds * 1000),
+        //               'dd MMM yyyy',
+        //             )
+        //           : 'Ngày không được cung cấp';
+        //         const tournamentName =
+        //           tournament.tournamentName || 'Không có tên giải đấu';
+
+        //         const startDay = startDate
+        //           ? format(startDate, 'dd')
+        //           : 'Ngày không được cung cấp';
+        //         const startMonth = startDate ? format(startDate, 'MMM') : '';
+        //         const startYear = startDate ? format(startDate, 'yyyy') : '';
+
+        //         const endDay = endDate
+        //           ? format(endDate, 'dd')
+        //           : 'Ngày không được cung cấp';
+        //         const endMonth = endDate ? format(endDate, 'MM') : '';
+        //         const endYear = endDate ? format(endDate, 'yyyy') : '';
+
+        //         return (
+        //           <div key={tournament.id} className="mt-5 h-full w-full">
+        //             <div
+        //               className="dark:bg-dark-light dark:border-dark-light relative rounded-lg border-2 border-white bg-white px-4 py-3 shadow-item transition duration-200 ease-in-out hover:border-brand-500 lg:col-span-6"
+        //               onClick={() => handleClick(tournament.id, user.id)}
+        //             >
+        //               {loadingTournamentId === tournament.id && (
+        //                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white bg-opacity-80">
+        //                   <Loader />
+        //                 </div>
+        //               )}
+
+        //               {/* Tournament Info */}
+        //               <div
+        //                 className={`${
+        //                   loadingTournamentId === tournament.id
+        //                     ? 'opacity-0'
+        //                     : ''
+        //                 }`}
+        //               >
+        //                 {/* Tablet & Desktop Styles */}
+        //                 <div className="hidden md:flex">
+        //                   <Avatar
+        //                     src={tournament.logoUrl}
+        //                     alt="avatar"
+        //                     variant="rounded"
+        //                     className="items-center justify-center"
+        //                   />
+        //                   <div className="ml-5">
+        //                     <div>
+        //                       <Typography variant="h5">
+        //                         Giải {tournamentName}
+        //                       </Typography>
+        //                     </div>
+        //                     <div className=" mt-1 text-base font-bold text-gray-700 md:mt-1">
+        //                       Diễn ra từ {startDay} - {endDay} tháng {endMonth}{' '}
+        //                       năm {endYear}
+        //                     </div>
+        //                     <div className="mt-1 text-sm text-gray-500">
+        //                       User ID: {tournament.userId}
+        //                     </div>
+        //                   </div>
+        //                 </div>
+
+        //                 {/* Mobile Styles */}
+        //                 <div className="flex flex-col items-stretch justify-center gap-6 md:hidden">
+        //                   <Typography variant="h4">{tournamentName}</Typography>
+        //                   <div className="flex items-center justify-between">
+        //                     <p className="text-heading-s-variant">
+        //                       <span className="text-blue-gray">#</span>
+        //                       {tournament.id}
+        //                     </p>
+        //                   </div>
+        //                   <div className="flex items-start justify-between">
+        //                     <div>
+        //                       <p className="text-body-variant text-gray-medium dark:text-gray-light pb-2">
+        //                         {startDate}
+        //                       </p>
+        //                       <p className="text-heading-s">
+        //                         {numberOfTeams} đội
+        //                       </p>
+        //                     </div>
+        //                     <div className="w-[104px]">
+        //                       {/* <Status status={tournament.status} /> */}
+        //                     </div>
+        //                   </div>
+        //                   <div className="mt-1 text-sm text-gray-500">
+        //                     User ID: {tournament.userId}
+        //                   </div>
+        //                 </div>
+        //               </div>
+        //             </div>
+        //           </div>
+        //         );
+        //       })}
+        //     </div>
+        //   ))}
+        // </div>
+        <div className="mt-20 w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[600px]">
+          <Button>
+            <Link href={'/auth/sign-in'}>
+              <div className="flex items-center gap-6 md:mb-2">
+                <div className="rotate-90">
+                  <ArrowIcon />
+                </div>
+                <p className="text-heading-s-variant hover:text-blue-gray dark:hover:text-gray-medium h-3 transition duration-200 ease-in-out">
+                  Go back
+                </p>
+              </div>
+            </Link>
+          </Button>
+
           {tournaments.map(({ user, tournaments }) => (
-            <div key={user.id} className="mt-5 h-full w-full">
-              <h2>{user.name}</h2>
+            <div key={user.id} className="mt-5  w-full">
               {tournaments.map((tournament) => {
                 const numberOfTeams =
                   tournament.numberOfTeams || 'Không có số lượng đội';
-                const startDate = tournament.startDate?.seconds
-                  ? format(
-                      new Date(tournament.startDate.seconds * 1000),
-                      'dd MMM yyyy',
-                    )
+                const startDateObj = tournament.startDate?.seconds
+                  ? new Date(tournament.startDate.seconds * 1000)
+                  : null;
+                const endDateObj = tournament.endDate?.seconds
+                  ? new Date(tournament.endDate.seconds * 1000)
+                  : null;
+
+                const startDateFormatted = startDateObj
+                  ? format(startDateObj, 'dd MMM yyyy')
                   : 'Ngày không được cung cấp';
-                const endDate = tournament.endDate?.seconds
-                  ? format(
-                      new Date(tournament.endDate.seconds * 1000),
-                      'dd MMM yyyy',
-                    )
+                const endDateFormatted = endDateObj
+                  ? format(endDateObj, 'dd MMM yyyy')
                   : 'Ngày không được cung cấp';
+
                 const tournamentName =
                   tournament.tournamentName || 'Không có tên giải đấu';
-
-                const startDay = startDate
-                  ? format(startDate, 'dd')
-                  : 'Ngày không được cung cấp';
-                const startMonth = startDate ? format(startDate, 'MMM') : '';
-                const startYear = startDate ? format(startDate, 'yyyy') : '';
-
-                const endDay = endDate
-                  ? format(endDate, 'dd')
-                  : 'Ngày không được cung cấp';
-                const endMonth = endDate ? format(endDate, 'MM') : '';
-                const endYear = endDate ? format(endDate, 'yyyy') : '';
 
                 return (
                   <div key={tournament.id} className="mt-5 h-full w-full">
@@ -91,11 +211,11 @@ const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
                       className="dark:bg-dark-light dark:border-dark-light relative rounded-lg border-2 border-white bg-white px-4 py-3 shadow-item transition duration-200 ease-in-out hover:border-brand-500 lg:col-span-6"
                       onClick={() => handleClick(tournament.id, user.id)}
                     >
-                      {loadingTournamentId === tournament.id && (
+                      {/* {loadingTournamentId === tournament.id && (
                         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white bg-opacity-80">
                           <Loader />
                         </div>
-                      )}
+                      )} */}
 
                       {/* Tournament Info */}
                       <div
@@ -119,12 +239,12 @@ const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
                                 Giải {tournamentName}
                               </Typography>
                             </div>
-                            <div className=" mt-1 text-base font-bold text-gray-700 md:mt-1">
-                              Diễn ra từ {startDay} - {endDay} tháng {endMonth}{' '}
-                              năm {endYear}
+                            <div className="mt-1 text-base font-bold text-gray-700 md:mt-1">
+                              Diễn ra từ {startDateFormatted} -{' '}
+                              {endDateFormatted}
                             </div>
                             <div className="mt-1 text-sm text-gray-500">
-                              User ID: {tournament.userId}
+                              Chủ giải đấu: {user.displayName}
                             </div>
                           </div>
                         </div>
@@ -141,7 +261,7 @@ const TournamentsList: React.FC<TournamentsListProps> = ({ tournaments }) => {
                           <div className="flex items-start justify-between">
                             <div>
                               <p className="text-body-variant text-gray-medium dark:text-gray-light pb-2">
-                                {startDate}
+                                {startDateFormatted}
                               </p>
                               <p className="text-heading-s">
                                 {numberOfTeams} đội

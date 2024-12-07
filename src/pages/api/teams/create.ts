@@ -148,10 +148,12 @@ export default async function handler(
           teamName: `Team ${i + 1}`,
           teamLogo: defaultLogoUrl, // Sử dụng URL của ảnh mặc định
           phone: `000-000-000${i + 1}`,
+          email: `team${i + 1}@.gmail.com`,
           tournamentId,
           userId,
           address: '',
           coach: '',
+
           players: [],
         };
         batch.set(teamRef, teamData);

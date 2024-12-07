@@ -209,15 +209,9 @@ const DevelopmentTable: React.FC<DevelopmentTableProps> = ({
             </Typography>
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Tìm kiếm"
-                icon={<FaMagnifyingGlass className="h-5 w-5" />}
-              />
-            </div>
             <Button
               onClick={exportPDF}
-              className="flex items-center gap-3"
+              className="flex items-center gap-3 py-3"
               size="sm"
             >
               <HiMiniArrowDownTray strokeWidth={2} className="h-4 w-4" /> Tải về

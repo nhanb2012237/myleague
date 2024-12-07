@@ -52,10 +52,9 @@ const nextConfig = {
 
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Chỉ thêm phần fallback cho môi trường client-side
       config.resolve.fallback = {
-        fs: false, // Loại bỏ mô-đun fs ở phía client
-        os: false, // Loại bỏ mô-đun os nếu không cần
+        fs: false,
+        os: false,
       };
     }
     return config;

@@ -3,6 +3,7 @@ File AppWrappers.tsx định nghĩa một component React có tên là AppWrappe
 Component này được sử dụng để bọc các component con của nó và đảm bảo rằng chúng không được render trên server (SSR - Server-Side Rendering).
 */
 import type { Metadata } from 'next';
+
 import React, { ReactNode } from 'react';
 import AppWrappers from './AppWrappers';
 // import '@asseinfo/react-kanban/dist/styles.css';
@@ -18,8 +19,7 @@ import Head from 'next/head';
 export const metadata: Metadata = {
   metadataBase: new URL('https://valik3201-invoice-app.vercel.app/'),
   title: 'Football Manage App',
-  description:
-    '',
+  description: '',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

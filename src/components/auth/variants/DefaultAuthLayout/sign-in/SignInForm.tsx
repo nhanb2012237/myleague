@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputField from 'components/FormElements/InputField';
 import Button from 'components/Button/Button';
+import { toast } from 'sonner';
 
 export default function SignInForm() {
   const { handleLogin } = useAuth();
@@ -36,12 +37,6 @@ export default function SignInForm() {
               error={formik.touched.email && formik.errors.email}
               placeholder="name@company.com"
             />
-            {/* {formik.errors.email && (
-              <p className="-mt-4 w-full font-[0.75rem] text-red-500">
-                {' '}
-                {formik.errors.email}{' '}
-              </p>
-            )} */}
 
             <InputField
               label="Password"

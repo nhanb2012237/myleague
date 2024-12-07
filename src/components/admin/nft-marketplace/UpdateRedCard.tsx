@@ -100,6 +100,17 @@ const UpdateRedCard: React.FC<RedCardComponentProps> = ({
     });
   }, [team1.teamId, team2.teamId, userId, tournamentId, matchId]);
 
+  useEffect(() => {
+    const allSelected =
+      redCardScorersTeam1.every((scorer) => scorer.playerId) &&
+      redCardScorersTeam2.every((scorer) => scorer.playerId);
+    if (!allSelected) {
+      setError('Vui lòng chọn cầu thủ cho tất cả các thẻ vàng.');
+    } else {
+      setError('');
+    }
+  }, [redCardScorersTeam1, redCardScorersTeam2]);
+
   const fetchPlayers = async (
     teamId: string,
     userId: string,

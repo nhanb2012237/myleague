@@ -21,12 +21,17 @@ const TopCreatorTable: React.FC<TopCreatorTableProps> = ({
   );
   const router = useRouter();
 
+  // const handleClick = (tournamentId: string) => {
+  //   setLoadingTournamentId(tournamentId);
+  //   setTimeout(() => {
+  //     setLoadingTournamentId(null);
+  //     router.push(`/admin/tournament/${tournamentId}`);
+  //   }, 15000);
+  // };
   const handleClick = (tournamentId: string) => {
     setLoadingTournamentId(tournamentId);
-    setTimeout(() => {
-      setLoadingTournamentId(null);
-      router.push(`/admin/tournament/${tournamentId}`);
-    }, 15000);
+    router.push(`/admin/tournament/${tournamentId}`);
+    setLoadingTournamentId(null); // Reset trạng thái ngay lập tức
   };
 
   return (

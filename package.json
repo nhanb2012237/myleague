@@ -1,5 +1,5 @@
 {
-  "name": "horizon-tailwind-react-nextjs",
+  "name": "football-tournament-management",
   "version": "2.0.0",
   "private": true,
   "dependencies": {
@@ -82,6 +82,7 @@
     "react-icons": "^4.4.0",
     "react-leaflet": "^4.2.1",
     "react-no-ssr": "^1.1.0",
+    "react-query": "^3.39.3",
     "react-quill": "^2.0.0",
     "react-redux": "^9.1.2",
     "react-router-dom": "^6.4.0",
@@ -101,7 +102,8 @@
     "yup": "^1.4.0"
   },
   "scripts": {
-    "dev": "next dev && open http://localhost:3000",
+    "dev": "npm run open-browser && next dev",
+    "open-browser": "start http://localhost:3000",
     "build": "next build",
     "start": "next start",
     "export": "next export",
@@ -148,6 +150,7 @@
     "eslint": "^8.23.0",
     "eslint-config-next": "^13.3.2",
     "gh-pages": "^3.2.3",
+    "open-cli": "^8.0.0",
     "opn-cli": "^5.0.0",
     "postcss": "^8.4.30",
     "prettier": "^2.8.3",

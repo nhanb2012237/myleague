@@ -17,6 +17,7 @@ const fetchTournamentsByUser = async (userId: string) => {
   const tournamentsSnapshot = await getDocs(tournamentsCollection);
   const tournamentsList = tournamentsSnapshot.docs.map((doc) => ({
     id: doc.id,
+    userId,
     ...doc.data(),
   }));
   return tournamentsList;

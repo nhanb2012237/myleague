@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -12,6 +11,7 @@ import SearchBox from './SearchBox';
 // import Maps from './Map';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   Input,
@@ -55,6 +55,7 @@ const CreateTournamentDialog = ({
   const { getProcessedImage, setImage, resetStates } = useImageCropContext();
   const [value, setValue] = useState(null);
   const [selectPosition, setSelectPosition] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -74,9 +75,17 @@ const CreateTournamentDialog = ({
       tournamentName: Yup.string()
         .required('Tên giải đấu là bắt buộc')
         .min(4, 'Tên giải đấu phải có ít nhất 4 ký tự'),
-      numberOfTeams: Yup.number().required('Số đội là bắt buộc'),
-      startDate: Yup.date().required('Ngày bắt đầu là bắt buộc'),
-      endDate: Yup.date().required('Ngày kết thúc là bắt buộc'),
+      numberOfTeams: Yup.number()
+        .required('Số đội là bắt buộc')
+        .min(2, 'Số đội phải ít nhất là 2'),
+      startDate: Yup.date()
+        .transform((curr, orig) => (orig === '' ? undefined : curr))
+        .required('Ngày bắt đầu là bắt buộc')
+        .min(new Date(), 'Ngày bắt đầu không thể là ngày trong quá khứ'),
+      endDate: Yup.date()
+        .transform((curr, orig) => (orig === '' ? undefined : curr))
+        .required('Ngày kết thúc là bắt buộc')
+        .min(Yup.ref('startDate'), 'Ngày kết thúc phải lớn hơn ngày bắt đầu'),
       location: Yup.string()
         .required('Địa điểm là bắt buộc')
         .min(4, 'Địa điểm phải có ít nhất 4 ký tự'),
@@ -136,6 +145,7 @@ const CreateTournamentDialog = ({
           // Optional: Call onTournamentCreated if needed
           onTournamentCreated(data.tournament?.id);
           toast.success('Giải đấu đã được tạo thành công!');
+          router.push(`/admin/tournament/${data.tournament?.id}`);
 
           // Close the dialog and reset form
           onTournamentsReload();
@@ -323,6 +333,11 @@ const CreateTournamentDialog = ({
                       Boolean(formik.errors.tournamentName)
                     }
                   />
+                  {formik.errors.tournamentName && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.tournamentName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mb-4">
@@ -338,6 +353,11 @@ const CreateTournamentDialog = ({
                       Boolean(formik.errors.numberOfTeams)
                     }
                   />
+                  {formik.errors.numberOfTeams && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.numberOfTeams}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mb-4">
@@ -358,7 +378,7 @@ const CreateTournamentDialog = ({
                     <Option value="7">7 người</Option>
                   </Select>
                   {formik.errors.numberOfPlayers && (
-                    <p className="font-sm mt-1 text-red-500">
+                    <p className="mt-1 text-xs text-red-500">
                       {formik.errors.numberOfPlayers}
                     </p>
                   )}
@@ -377,6 +397,11 @@ const CreateTournamentDialog = ({
                       Boolean(formik.errors.startDate)
                     }
                   />
+                  {formik.errors.startDate ? (
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.startDate}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="mb-4">
@@ -391,6 +416,11 @@ const CreateTournamentDialog = ({
                       formik.touched.endDate && Boolean(formik.errors.endDate)
                     }
                   />
+                  {formik.errors.endDate ? (
+                    <p className="mt-1 text-xs text-red-500">
+                      {formik.errors.endDate}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -410,6 +440,7 @@ const CreateTournamentDialog = ({
           </div>
         </div>
       </DialogBody>
+
       <DialogFooter>
         <div className="mr-0 flex justify-end">
           <Button

@@ -13,17 +13,20 @@ import { Team, Player } from 'models/entities';
 import Default from 'components/auth/variants/UserPlayerLayout/index';
 import RankingTableUser from 'components/user/tournament/RankingTableUser';
 import Banner from 'components/user/tournament/Banner';
+import Button from 'components/Button/Button';
+import Link from 'next/link';
+import ArrowIcon from 'components/icons/ArrowIcon';
 
 const TournamentPage = () => {
   const router = useRouter();
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const { tournamentId, userId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
-
   const [teams, setTeams] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [penalties, setPenalties] = useState({});
+  const [reload, setReload] = useState<boolean>(false); // Thêm state reload
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -138,6 +141,20 @@ const TournamentPage = () => {
       maincard={
         <div className="mt-10 grid h-full grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
           <div className="col-span-1 h-fit w-full xl:col-span-1 2xl:col-span-2">
+            <div className="mb-5">
+              <Button>
+                <Link href={'/auth/sign-in'}>
+                  <div className="flex items-center gap-6 md:mb-2">
+                    <div className="rotate-90">
+                      <ArrowIcon />
+                    </div>
+                    <p className="text-heading-s-variant hover:text-blue-gray dark:hover:text-gray-medium h-3 transition duration-200 ease-in-out">
+                      Go back
+                    </p>
+                  </div>
+                </Link>
+              </Button>
+            </div>
             <Banner
               match={selectedMatch}
               userId={userId as string}
@@ -153,11 +170,12 @@ const TournamentPage = () => {
             </div>
           </div>
 
-          <div className="col-span-1 h-full w-full rounded-xl 2xl:col-span-1">
+          <div className="col-span-1 mt-10 h-full w-full rounded-xl 2xl:col-span-1">
             <TopCreatorTable
               userId={userId as string}
               tournamentId={tournamentId as string}
               setLoading={setLoading}
+              reload={reload}
             />
             <div className="mb-5" />
             <MatchUser

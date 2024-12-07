@@ -7,8 +7,7 @@ import {
   collection,
   addDoc,
   serverTimestamp,
-  getDocs,
-  deleteDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { db } from '../../../../config/firebaseconfig';
 
@@ -139,51 +138,84 @@ export default async function handler(
 
       await Promise.all([...goalPromises, ...penaltyPromises]);
 
-      // Lưu thông tin thống kê của đội 1 lần đầu tiên
-      const team1StatsRef = doc(
-        db,
-        `users/${userId}/tournaments/${tournamentId}/rankings/${team1Id}`,
-      );
+      // Hàm để cập nhật hoặc khởi tạo thống kê đội
+      const updateOrSetTeamStats = async (
+        teamId: string,
+        win: number,
+        draw: number,
+        loss: number,
+        goalsFor: number,
+        goalsAgainst: number,
+        goalDifference: number,
+        points: number,
+      ) => {
+        const teamStatsRef = doc(
+          db,
+          `users/${userId}/tournaments/${tournamentId}/rankings/${teamId}`,
+        );
+        const teamSnap = await getDoc(teamStatsRef);
+        if (teamSnap.exists()) {
+          // Đội đã tồn tại, cập nhật các chỉ số
+          await updateDoc(teamStatsRef, {
+            matchesPlayed: increment(1),
+            wins: increment(win),
+            draws: increment(draw),
+            losses: increment(loss),
+            goalsFor: increment(goalsFor),
+            goalsAgainst: increment(goalsAgainst),
+            goalDifference: increment(goalDifference),
+            points: increment(points),
+          });
+        } else {
+          // Đội chưa tồn tại, khởi tạo các chỉ số
+          await setDoc(teamStatsRef, {
+            teamId,
+            matchesPlayed: 1,
+            wins: win,
+            draws: draw,
+            losses: loss,
+            goalsFor,
+            goalsAgainst,
+            goalDifference,
+            points,
+          });
+        }
+      };
 
+      // Tính toán các chỉ số của đội 1
       const team1Win = team1Score > team2Score ? 1 : 0;
       const team1Draw = team1Score === team2Score ? 1 : 0;
       const team1Loss = team1Score < team2Score ? 1 : 0;
       const team1Points = team1Win * 3 + team1Draw;
 
-      await setDoc(team1StatsRef, {
-        teamId: team1Id,
-        matchesPlayed: 1,
-        wins: team1Win,
-        draws: team1Draw,
-        losses: team1Loss,
-        goalsFor: team1Score,
-        goalsAgainst: team2Score,
-        goalDifference: team1Score - team2Score,
-        points: team1Points,
-      });
-
-      // Lưu thông tin thống kê của đội 2 lần đầu tiên
-      const team2StatsRef = doc(
-        db,
-        `users/${userId}/tournaments/${tournamentId}/rankings/${team2Id}`,
-      );
-
+      // Tính toán các chỉ số của đội 2
       const team2Win = team2Score > team1Score ? 1 : 0;
       const team2Draw = team2Score === team1Score ? 1 : 0;
       const team2Loss = team2Score < team1Score ? 1 : 0;
       const team2Points = team2Win * 3 + team2Draw;
 
-      await setDoc(team2StatsRef, {
-        teamId: team2Id,
-        matchesPlayed: 1,
-        wins: team2Win,
-        draws: team2Draw,
-        losses: team2Loss,
-        goalsFor: team2Score,
-        goalsAgainst: team1Score,
-        goalDifference: team2Score - team1Score,
-        points: team2Points,
-      });
+      // Cập nhật thống kê cho đội 1 và đội 2
+      await updateOrSetTeamStats(
+        team1Id,
+        team1Win,
+        team1Draw,
+        team1Loss,
+        team1Score,
+        team2Score,
+        team1Score - team2Score,
+        team1Points,
+      );
+
+      await updateOrSetTeamStats(
+        team2Id,
+        team2Win,
+        team2Draw,
+        team2Loss,
+        team2Score,
+        team1Score,
+        team2Score - team1Score,
+        team2Points,
+      );
 
       res.status(200).json({ message: 'Cập nhật trận đấu thành công' });
     } catch (error) {

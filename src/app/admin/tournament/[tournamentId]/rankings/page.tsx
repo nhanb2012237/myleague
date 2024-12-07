@@ -29,7 +29,6 @@ const Tables = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserId(user.uid);
-
         // console.log('User logged in1:', user.uid);
       } else {
         // Handle user not logged in
@@ -160,12 +159,6 @@ const Tables = () => {
           // setLoading={setLoading}
         />
       </div>
-
-      {/* <div className="mt-5 grid h-full grid-cols-1 gap-5 md:grid-cols-2">
-        <ColumnsTable tableData={tableDataColumns} />
-
-        <ComplexTable tableData={tableDataComplex} />
-      </div> */}
     </div>
   );
 };
